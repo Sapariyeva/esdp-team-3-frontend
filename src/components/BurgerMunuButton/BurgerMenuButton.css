@@ -1,0 +1,18 @@
+.burger-menu-button {
+  position: fixed;
+  top: 40px;
+  right: 30px;
+  font-size: 34px;
+  color: #ffffff;
+  border: none;
+  background: #006698;
+  padding: 4px;
+  cursor: pointer;
+  border-radius: 5px;
+}
+
+.burger-menu-button:focus,
+.burger-menu-button:active {
+  outline: none;
+  box-shadow: none;
+}
