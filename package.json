@@ -39,5 +39,16 @@
         "sass": "^1.69.5",
         "typescript": "^5.0.2",
         "vite": "^4.4.5"
+    },
+    "lint-staged": {
+        "src/**/*.{js,jsx,ts,tsx}": [
+            "prettier --write --ignore-unknown",
+            "npx eslint --fix  --color"
+        ]
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
     }
 }
