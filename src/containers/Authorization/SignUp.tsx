@@ -44,9 +44,9 @@ export const SignUp = () => {
 		if (role === ERole.customer) {
 			setStateValueForm({
 				...stateValueForm,
-				subject: EUserSubject.LEGAL,
+				subject: EUserSubject.INDIVIDUAL,
 			});
-			form.setFieldsValue({ subject: EUserSubject.LEGAL });
+			form.setFieldsValue({ subject: EUserSubject.INDIVIDUAL });
 		} else {
 			setStateValueForm({
 				...stateValueForm,
@@ -257,19 +257,19 @@ export const SignUp = () => {
 								>
 									<Radio.Group className="radio-custom">
 										<Radio.Button
-											value={EUserSubject.LEGAL}
-										>
-											Юр. лицо
-										</Radio.Button>
-										<Radio.Button
 											value={EUserSubject.INDIVIDUAL}
 										>
 											Физ. лицо
 										</Radio.Button>
+										<Radio.Button
+											value={EUserSubject.LEGAL}
+										>
+											Юр. лицо
+										</Radio.Button>
 									</Radio.Group>
 								</Form.Item>
 								{stateValueForm.subject ===
-								EUserSubject.INDIVIDUAL ? (
+								EUserSubject.LEGAL ? (
 									<>
 										<Form.Item
 											name="identifyingNumber"
