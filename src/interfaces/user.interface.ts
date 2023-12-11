@@ -15,7 +15,8 @@ export interface IUser {
 	lastPosition: string;
 	identifyingNumber: number;
 	status: EUserStatus;
-	token?: string | null;
+	accessToken?: string | null;
+	refreshToken?: string | null;
 }
 
 export interface IUserSignUpRequest {

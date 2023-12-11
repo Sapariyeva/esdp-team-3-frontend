@@ -8,12 +8,7 @@ import {
 } from '@/interfaces/user.interface.ts';
 import { ERole } from '@/enum/role.enum.ts';
 import { EUserStatus } from '@/enum/user.enum.ts';
-import {
-	userSignIn,
-	userSignInConfirmRole,
-	userSignOut,
-	userSignUp,
-} from '@/api/user.api.ts';
+import { $api } from '@/api/api.ts';
 
 const initialState: IUserState = {
 	user: {
@@ -30,7 +25,8 @@ const initialState: IUserState = {
 		lastPosition: '',
 		identifyingNumber: 0,
 		status: EUserStatus.ACTIVE,
-		token: '',
+		accessToken: '',
+		refreshToken: ''
 	},
 	multiRoleSuccess: false,
 };
@@ -42,7 +38,7 @@ export const signUp = createAsyncThunk(
 			Object.entries(user).filter(([_, value]) => value !== null)
 		);
 		try {
-			const { data } = await userSignUp.post('', request);
+			const { data } = await $api.post('/user/signUp', request);
 			return data.success;
 		} catch (e) {
 			return rejectWithValue('HTTP error post request');
@@ -53,20 +49,20 @@ export const signUp = createAsyncThunk(
 export const signIn = createAsyncThunk(
 	'signIn',
 	async (user: IUserSignInRequest, { rejectWithValue }) => {
+		console.log(123)
 		try {
 			const request = Object.fromEntries(
 				Object.entries(user).filter(([_, value]) => value !== null)
 			);
-			const { data }: IUserSignInResponse = await userSignIn.post(
-				'',
-				request
-			);
-			if (data.payload.token) {
+
+			const { data }: IUserSignInResponse = await $api.post('/user/signIn', request);
+			if (data.payload.accessToken) {
 				return data.payload;
 			} else {
 				return Object.values(data.payload);
 			}
 		} catch (e) {
+			console.log(e)
 			return rejectWithValue('HTTP error signIn');
 		}
 	}
@@ -77,7 +73,7 @@ export const signInConfirmRole = createAsyncThunk(
 		const { rejectWithValue } = thunkApi;
 		try {
 			const { data }: IUserSignInResponse =
-				await userSignInConfirmRole.post('', user);
+				await $api.post('/user/signInWithRole', user);
 			return data.payload;
 		} catch (e) {
 			return rejectWithValue('HTTP error signInConfirmRole');
@@ -88,7 +84,7 @@ export const signOut = createAsyncThunk(
 	'signOut',
 	async (token: string, { rejectWithValue }) => {
 		try {
-			await userSignOut.post('', null, {
+			await $api.post('/user/signOut', null, {
 				headers: {
 					Authorization: `Bearer ${token}`,
 				},
@@ -105,7 +101,7 @@ export const userSlice = createSlice({
 	reducers: {},
 	extraReducers: (builder) => {
 		builder
-			.addCase(signIn.pending, () => {})
+			.addCase(signIn.pending, () => { })
 			.addCase(
 				signIn.fulfilled,
 				(state, action: PayloadAction<IUser | IUser[]>) => {
@@ -118,13 +114,13 @@ export const userSlice = createSlice({
 					}
 				}
 			)
-			.addCase(signIn.rejected, () => {})
+			.addCase(signIn.rejected, () => { })
 
-			.addCase(signUp.pending, () => {})
-			.addCase(signUp.fulfilled, () => {})
-			.addCase(signUp.rejected, () => {})
+			.addCase(signUp.pending, () => { })
+			.addCase(signUp.fulfilled, () => { })
+			.addCase(signUp.rejected, () => { })
 
-			.addCase(signInConfirmRole.pending, () => {})
+			.addCase(signInConfirmRole.pending, () => { })
 			.addCase(
 				signInConfirmRole.fulfilled,
 				(state, action: PayloadAction<IUser | IUser[]>) => {
@@ -132,9 +128,9 @@ export const userSlice = createSlice({
 					state.user = payload;
 				}
 			)
-			.addCase(signInConfirmRole.rejected, () => {})
+			.addCase(signInConfirmRole.rejected, () => { })
 
-			.addCase(signOut.pending, () => {})
+			.addCase(signOut.pending, () => { })
 			.addCase(signOut.fulfilled, (state) => {
 				state.user = {
 					id: 0,
@@ -152,6 +148,6 @@ export const userSlice = createSlice({
 					status: EUserStatus.ACTIVE,
 				};
 			})
-			.addCase(signOut.rejected, () => {});
+			.addCase(signOut.rejected, () => { });
 	},
 });
