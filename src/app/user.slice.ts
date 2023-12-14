@@ -22,7 +22,7 @@ const initialState: IUserState = {
 		role: ERole.customer,
 		avgRating: 0,
 		ratingCount: 0,
-		lastPosition: '',
+		lastPostition: '',
 		identifyingNumber: 0,
 		status: EUserStatus.ACTIVE,
 		accessToken: '',
@@ -143,7 +143,7 @@ export const userSlice = createSlice({
 					role: ERole.customer,
 					avgRating: 0,
 					ratingCount: 0,
-					lastPosition: '',
+					lastPostition: '',
 					identifyingNumber: 0,
 					status: EUserStatus.ACTIVE,
 				};

@@ -21,20 +21,31 @@ $api.interceptors.request.use(config => {
 })
 
 $api.interceptors.response.use((config) => {
-    localStorage.setItem('token', config.data.payload.accessToken);
+    // Проверяем, что payload и accessToken существуют перед их использованием
+    if (config.data.payload && config.data.payload.accessToken) {
+        localStorage.setItem('token', config.data.payload.accessToken);
+    }
     return config;
 }, async (error) => {
     console.log(error.response);
     const originalRequest = error.config;
-    if (error.response.status === 401 && error.config && !error.config._isRetry) {
+
+    // Обработка случая, когда токен просрочен или невалиден
+    if (error.response.status === 401 && !originalRequest._isRetry) {
         originalRequest._isRetry = true;
         try {
+            // Получаем новый токен,
             const response = await axios.get(`${API_URL}/refresh`, { withCredentials: true });
-            localStorage.setItem('token', response.data.accessToken);
-            return $api.request(originalRequest);
+            // Убедждаемся, что accessToken действительно получен
+            if (response.data.accessToken) {
+                localStorage.setItem('token', response.data.accessToken);
+                originalRequest.headers.Authorization = `Bearer ${response.data.accessToken}`;
+                return $api.request(originalRequest);
+            }
         } catch (e) {
-            console.log('Unauthorized');
+            console.log('Не удалось обновить токен, пользователь не авторизован');
         }
     }
+
     throw error;
-})
+});
