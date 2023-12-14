@@ -24,7 +24,6 @@ export const fetchUsers = createAsyncThunk(
     async (_, { rejectWithValue }) => {
         try {
             const response = await $api.get('/user');
-            console.log('Users:', response.data.users);
             return response.data.users;
         } catch (error) {
             console.error('Error during fetchUsers:', error);
