@@ -1,0 +1,9 @@
+.modalFilter-radioButton{
+  &::before{
+    content: none !important;
+  }
+}
+.ant-modal-content{
+  max-height: 80vh;
+  overflow-x: scroll
+}
