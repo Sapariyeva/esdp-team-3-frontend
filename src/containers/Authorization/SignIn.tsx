@@ -95,7 +95,7 @@ export const SignIn = () => {
 					</Radio.Group>
 				</Form.Item>
 			</ModalConfirm>
-			<Space direction="vertical" size="middle">
+			<Space className={'space'} direction="vertical" size="middle" style={{display: "flex"}}>
 				<Flex vertical justify={'center'} align={'center'}>
 					<Typography.Title level={2}>Вход</Typography.Title>
 					<Form
