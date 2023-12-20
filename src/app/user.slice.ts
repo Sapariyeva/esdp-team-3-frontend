@@ -184,10 +184,12 @@ export const userSlice = createSlice({
 				};
 			})
 			.addCase(signOut.rejected, () => { })
+
 			.addCase(fetchManagers.fulfilled, (state, action) => {
 				state.managers = action.payload;
 			})
 			.addCase(fetchManagers.rejected, () => { })
+
 			.addCase(fetchUserByPhone.fulfilled, (state, action) => {
 				if (action.payload.users && action.payload.users.length > 0) {
 					state.user = action.payload.users[0];
@@ -195,6 +197,8 @@ export const userSlice = createSlice({
 			})
 
 			.addCase(fetchUserByPhone.rejected, () => {
-			})
+
+			});
+
 	},
 });
