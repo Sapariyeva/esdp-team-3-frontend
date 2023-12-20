@@ -7,6 +7,7 @@ import { SignIn } from '@/containers/Authorization/SignIn.tsx';
 import { ErrorPage } from '@/containers/ErrorPage/ErrorPage.tsx';
 import CreateOrderForm from './containers/OrderCreate/CreateOrderForm';
 import { Orders } from '@/containers/Orders/Orders.tsx';
+import UsersPageContainer from './containers/Users/UsersPage';
 
 export const App = () => {
 	return (
@@ -18,6 +19,7 @@ export const App = () => {
 						<Route path={'/signIn'} element={<SignIn />}></Route>
 						<Route path={'/order'} element={<Orders />}></Route>
 						<Route path={'/*'} element={<ErrorPage />}></Route>
+						<Route path={'/user'} element={<UsersPageContainer />}></Route>
 						<Route path={'/createOrderForm'} element={<CreateOrderForm />}></Route>
 					</Route>
 				</Routes>
