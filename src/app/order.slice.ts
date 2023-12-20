@@ -3,11 +3,11 @@ import {
 	IOrderState,
 	IResponseManagerList,
 	IResponseOrders,
-	IToken,
 	IUserOrder,
 } from '@/interfaces/order.interface.ts';
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { order } from '@/api/api.ts';
+import { $api } from '@/api/api.ts';
+import { IOrderRequest } from '@/interfaces/IOrderRequest.interface';
 
 const initialState: IOrderState = {
 	orderData: {
@@ -24,29 +24,20 @@ const initialState: IOrderState = {
 };
 
 export const getOrders = createAsyncThunk('getOrders', async (_, thunkApi) => {
-	const { rejectWithValue, getState } = thunkApi;
+	const { rejectWithValue } = thunkApi;
 	try {
-		const token = getState() as IToken;
-		const { data }: IResponseOrders = await order.get(`/order`, {
-			headers: {
-				Authorization: `Bearer ${token?.user.user.accessToken}`,
-			},
-		});
+		const { data }: IResponseOrders = await $api.get(`/order`);
 		return data;
 	} catch (e) {
 		return rejectWithValue('HTTP error post request');
 	}
 });
+
 export const getPageData = createAsyncThunk(
 	'getPageData',
-	async (page: string, { rejectWithValue, getState }) => {
+	async (page: string, { rejectWithValue }) => {
 		try {
-			const token = getState() as IToken;
-			const { data }: IResponseOrders = await order.get(page, {
-				headers: {
-					Authorization: `Bearer ${token?.user.user.accessToken}`,
-				},
-			});
+			const { data }: IResponseOrders = await $api.get(page);
 			return data;
 		} catch (e) {
 			return rejectWithValue('HTTP error post request');
@@ -55,16 +46,10 @@ export const getPageData = createAsyncThunk(
 );
 export const getUserList = createAsyncThunk(
 	'getUserList',
-	async (role: string, { rejectWithValue, getState }) => {
+	async (role: string, { rejectWithValue }) => {
 		try {
-			const token = getState() as IToken;
-			const { data }: IResponseManagerList = await order.get(
-				`/user?role=${role}`,
-				{
-					headers: {
-						Authorization: `Bearer ${token?.user.user.accessToken}`,
-					},
-				}
+			const { data }: IResponseManagerList = await $api.get(
+				`/user?role=${role}`
 			);
 			const userList = data.users.map(({ id, displayName }) => ({
 				id,
@@ -82,20 +67,29 @@ export const getUserList = createAsyncThunk(
 
 export const getFilterOrders = createAsyncThunk(
 	'getFilterOrders',
-	async (queryParameter: string, { rejectWithValue, getState }) => {
+	async (queryParameter: string, { rejectWithValue }) => {
 		try {
-			const token = getState() as IToken;
-			const { data }: IResponseOrders = await order.get(
-				`/order?${queryParameter}`,
-				{
-					headers: {
-						Authorization: `Bearer ${token?.user.user.accessToken}`,
-					},
-				}
+			const { data }: IResponseOrders = await $api.get(
+				`/order?${queryParameter}`
 			);
 			return data;
 		} catch (e) {
 			return rejectWithValue('');
+		}
+	}
+);
+
+export const createOrder = createAsyncThunk(
+	'createOrder',
+	async (order: IOrderRequest, { rejectWithValue }) => {
+		try {
+			const response = await $api.post('/order', order);
+			console.log(response);
+
+			return response.data;
+		} catch (e) {
+			console.error('Error while creating order:', e);
+			return rejectWithValue('HTTP error createOrder');
 		}
 	}
 );
@@ -113,25 +107,25 @@ export const orderSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
-			.addCase(getOrders.pending, () => {})
+			.addCase(getOrders.pending, () => { })
 			.addCase(
 				getOrders.fulfilled,
 				(state, action: PayloadAction<IOrderList>) => {
 					state.orderData = action.payload;
 				}
 			)
-			.addCase(getOrders.rejected, () => {})
+			.addCase(getOrders.rejected, () => { })
 
-			.addCase(getPageData.pending, () => {})
+			.addCase(getPageData.pending, () => { })
 			.addCase(
 				getPageData.fulfilled,
 				(state, action: PayloadAction<IOrderList>) => {
 					state.orderData = action.payload;
 				}
 			)
-			.addCase(getPageData.rejected, () => {})
+			.addCase(getPageData.rejected, () => { })
 
-			.addCase(getUserList.pending, () => {})
+			.addCase(getUserList.pending, () => { })
 			.addCase(
 				getUserList.fulfilled,
 				(
@@ -149,9 +143,9 @@ export const orderSlice = createSlice({
 					}
 				}
 			)
-			.addCase(getUserList.rejected, () => {})
+			.addCase(getUserList.rejected, () => { })
 
-			.addCase(getFilterOrders.pending, () => {})
+			.addCase(getFilterOrders.pending, () => { })
 			.addCase(
 				getFilterOrders.fulfilled,
 				(state, action: PayloadAction<IOrderList>) => {
