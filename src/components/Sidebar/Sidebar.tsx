@@ -18,12 +18,16 @@ const items: MenuProps['items'] = [
         type: 'divider',
     },
     {
-        label: <Link className={'sidebar__link'} to={'/order'} children={'Order'}/>,
+        label: <Link className={'sidebar__link'} to={'/order'} children={'Order List'}/>,
         key: '3',
     },
     {
         label: <Link className={'sidebar__link'} to={'/createOrderForm'} children={'Create order form'}/>,
         key: '4',
+    },
+    {
+        label: <Link className={'sidebar__link'} to={'/user'} children={'User List'}/>,
+        key: '5',
     },
 ];
 

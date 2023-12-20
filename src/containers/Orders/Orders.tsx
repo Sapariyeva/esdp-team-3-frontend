@@ -152,10 +152,9 @@ export const Orders = () => {
 										<>
 											{orderData.orders.map(
 												(item, index) => (
-													<Col span={24}>
+													<Col span={24} key={index}>
 														<Order
 															{...item}
-															key={index}
 														/>
 													</Col>
 												)
