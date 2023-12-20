@@ -50,6 +50,7 @@ export interface IUserSignInRequest {
 export interface IUserState {
 	user: IUser | IUser[];
 	multiRoleSuccess: boolean;
+	managers: IUser[];
 }
 
 export interface IUserSignInResponseData {

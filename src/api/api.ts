@@ -21,20 +21,26 @@ $api.interceptors.request.use(config => {
 })
 
 $api.interceptors.response.use((config) => {
-    localStorage.setItem('token', config.data.payload.accessToken);
+    // Проверяем, существует ли accessToken в ответе
+    if (config.data && config.data.payload && config.data.payload.accessToken) {
+        localStorage.setItem('token', config.data.payload.accessToken);
+    }
     return config;
 }, async (error) => {
     console.log(error.response);
     const originalRequest = error.config;
-    if (error.response.status === 401 && error.config && !error.config._isRetry) {
+    if (error.response && error.response.status === 401 && originalRequest && !originalRequest._isRetry) {
         originalRequest._isRetry = true;
         try {
             const response = await axios.get(`${API_URL}/refresh`, { withCredentials: true });
-            localStorage.setItem('token', response.data.accessToken);
-            return $api.request(originalRequest);
+            // Проверяем, существует ли accessToken в ответе
+            if (response.data && response.data.accessToken) {
+                localStorage.setItem('token', response.data.accessToken);
+                return $api.request(originalRequest);
+            }
         } catch (e) {
             console.log('Unauthorized');
         }
     }
     throw error;
-})
+});

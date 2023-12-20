@@ -9,6 +9,7 @@ import {
 import { ERole } from '@/enum/role.enum.ts';
 import { EUserStatus } from '@/enum/user.enum.ts';
 import { $api } from '@/api/api.ts';
+import { IOrderRequest } from '@/interfaces/IOrderRequest.interface';
 
 const initialState: IUserState = {
 	user: {
@@ -29,7 +30,9 @@ const initialState: IUserState = {
 		refreshToken: ''
 	},
 	multiRoleSuccess: false,
+	managers: []
 };
+
 export const signUp = createAsyncThunk(
 	'signUp',
 	async (user: IUserSignUpRequest, thunkApi) => {
@@ -67,6 +70,7 @@ export const signIn = createAsyncThunk(
 		}
 	}
 );
+
 export const signInConfirmRole = createAsyncThunk(
 	'signInConfirmRole',
 	async (user: IUserSignInRequest, thunkApi) => {
@@ -80,6 +84,7 @@ export const signInConfirmRole = createAsyncThunk(
 		}
 	}
 );
+
 export const signOut = createAsyncThunk(
 	'signOut',
 	async (token: string, { rejectWithValue }) => {
@@ -91,6 +96,47 @@ export const signOut = createAsyncThunk(
 			});
 		} catch (e) {
 			return rejectWithValue('HTTP error signOut');
+		}
+	}
+);
+
+export const fetchManagers = createAsyncThunk(
+	'fetchManagers',
+	async (_, { rejectWithValue }) => {
+		try {
+			const { data } = await $api.get('/user?role=manager');
+			return data.users;
+		} catch (e) {
+			console.error('Ошибка при загрузке менеджеров:', e);
+			return rejectWithValue('HTTP error fetchManagers');
+		}
+	}
+);
+
+export const createOrder = createAsyncThunk(
+	'createOrder',
+	async (order: IOrderRequest, { rejectWithValue }) => {
+		try {
+			const response = await $api.post('/order', order);
+			console.log(response);
+
+			return response.data;
+		} catch (e) {
+			console.error('Error while creating order:', e);
+			return rejectWithValue('HTTP error createOrder');
+		}
+	}
+);
+
+export const fetchUserByPhone = createAsyncThunk(
+	'fetchUserByPhone',
+	async (phone: string, { rejectWithValue }) => {
+		try {
+			const response = await $api.get(`/user?phone=${phone}`);
+			return response.data;
+		} catch (error) {
+			console.error('Ошибка при получении данных пользователя:', error);
+			return rejectWithValue('HTTP error fetchUserByPhone');
 		}
 	}
 );
@@ -148,6 +194,19 @@ export const userSlice = createSlice({
 					status: EUserStatus.ACTIVE,
 				};
 			})
-			.addCase(signOut.rejected, () => { });
+			.addCase(signOut.rejected, () => { })
+			.addCase(fetchManagers.fulfilled, (state, action) => {
+				state.managers = action.payload;
+			})
+			.addCase(fetchManagers.rejected, () => { })
+			.addCase(fetchUserByPhone.fulfilled, (state, action) => {
+				if (action.payload.users && action.payload.users.length > 0) {
+					state.user = action.payload.users[0]; 
+				}
+			})
+
+			.addCase(fetchUserByPhone.rejected, () => {
+			});
+
 	},
 });
