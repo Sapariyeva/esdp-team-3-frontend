@@ -1,0 +1,12 @@
+.sidebar {
+  position: fixed;
+  top: 5%;
+  left: 5%;
+  z-index: 10;
+  &__button {
+    height: auto;
+    padding: 15px;
+    background-color: red;
+    margin-bottom: 16px;
+  }
+}

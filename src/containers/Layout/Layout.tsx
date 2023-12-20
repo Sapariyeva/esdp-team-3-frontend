@@ -1,11 +1,11 @@
 import { Outlet } from 'react-router-dom';
-import { Header } from '@/components/Header/Header.tsx';
+import Sidebar from "@/components/Sidebar/Sidebar.tsx";
 
 export const Layout = () => {
 	return (
 		<>
-			<Header />
 			<main>
+				<Sidebar/>
 				<Outlet></Outlet>
 			</main>
 		</>
