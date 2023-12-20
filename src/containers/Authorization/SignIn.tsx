@@ -53,7 +53,7 @@ export const SignIn = () => {
 				...stateValueForm,
 				phone: stateValueForm.phone
 					.replace(/[\s()+_-]/g, '')
-					.substring(1),
+					,
 				role: e.target.value,
 			})
 		);
