@@ -42,14 +42,9 @@ export const getOrders = createAsyncThunk('getOrders', async (_, thunkApi) => {
 export const getOrder = createAsyncThunk(
 	'getOrder',
 	async (id: string, thunkApi) => {
-		const { rejectWithValue, getState } = thunkApi;
+		const { rejectWithValue } = thunkApi;
 		try {
-			const token = getState() as IToken;
-			const { data }: IResponseOrder = await order.get(`/order/${id}`, {
-				headers: {
-					Authorization: `Bearer ${token?.user.user.accessToken}`,
-				},
-			});
+			const { data }: IResponseOrder = await $api.get(`/order/${id}`);
 			return data;
 		} catch (e) {
 			return rejectWithValue('HTTP error post request');
@@ -146,7 +141,7 @@ export const orderSlice = createSlice({
 			)
 			.addCase(getOrders.rejected, () => { })
 
-			.addCase(getOrder.pending, () => {})
+			.addCase(getOrder.pending, () => { })
 			.addCase(
 				getOrder.fulfilled,
 				(state, action: PayloadAction<IOrder>) => {
@@ -159,8 +154,8 @@ export const orderSlice = createSlice({
 				};
 			})
 
-			.addCase(getPageData.pending, () => {})
-    
+			.addCase(getPageData.pending, () => { })
+
 			.addCase(
 				getPageData.fulfilled,
 				(state, action: PayloadAction<IOrderList>) => {

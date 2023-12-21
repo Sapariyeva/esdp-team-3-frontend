@@ -35,7 +35,7 @@ const items: MenuProps['items'] = [
     },
     {
         label: <Link className={'sidebar__link'} to={'http://localhost:8000/user/export-csv'} children={'User List export'}/>,
-        key: '6',
+        key: '7',
     }
 ];
 

@@ -9,7 +9,6 @@ import {
 import { ERole } from '@/enum/role.enum.ts';
 import { EUserStatus } from '@/enum/user.enum.ts';
 import { $api } from '@/api/api.ts';
-import { IOrderRequest } from '@/interfaces/IOrderRequest.interface';
 
 const initialState: IUserState = {
 	user: {
@@ -197,7 +196,7 @@ export const userSlice = createSlice({
 				}
 			})
 
-			.addCase(fetchUserByPhone.rejected, () => {});
+			.addCase(fetchUserByPhone.rejected, () => { });
 
 	},
 });
