@@ -92,7 +92,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, totalItems, pageSize, fetc
             key: 'birthday',
             sorter: (a, b) => (a.birthday || '').localeCompare(b.birthday || ''),
             render: (text: string) => text || 'N/A',
-        },
+        }, 
         {
             title: 'Role',
             dataIndex: 'role',
