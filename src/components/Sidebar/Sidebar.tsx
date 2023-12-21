@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {MenuFoldOutlined, MenuUnfoldOutlined} from '@ant-design/icons';
+import {MenuFoldOutlined, MenuOutlined, MenuUnfoldOutlined} from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import {Button, Dropdown} from 'antd';
 import {Link} from "react-router-dom";
@@ -42,7 +42,7 @@ const Sidebar = () => {
                 type="primary"
                 onClick={toggleCollapsed}
         >
-            {collapsed ? <MenuUnfoldOutlined/> : <MenuFoldOutlined/>}
+            {collapsed ? <MenuOutlined /> : <MenuOutlined/>}
         </Button>
     </Dropdown>
 };

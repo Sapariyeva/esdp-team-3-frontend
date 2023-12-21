@@ -1,12 +1,14 @@
 .sidebar {
-  position: fixed;
-  top: 5%;
-  left: 5%;
-  z-index: 10;
-  &__button {
-    height: auto;
-    padding: 15px;
-    background-color: red;
-    margin-bottom: 16px;
+  width: 70px;
+  height: 100vh;
+  background-color: #f0f0f0;
+  margin: 10px;
+  position: sticky;
+  &__link {
+    text-decoration: none;
+    color: black;
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
   }
 }
