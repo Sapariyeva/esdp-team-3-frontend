@@ -2,6 +2,7 @@ export const providerStyleConfig = {
 	theme: {
 		token: {
 			fontFamily: "'Montserrat', sans-serif",
+			colorPrimary: '#006698',
 		},
 	},
 	form: {
@@ -21,7 +22,6 @@ export const providerStyleConfig = {
 	},
 	button: {
 		style: {
-			background: '#006698',
 			height: '54px',
 			fontWeight: '500',
 			fontSize: '16px',

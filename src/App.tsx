@@ -7,6 +7,7 @@ import { SignIn } from '@/containers/Authorization/SignIn.tsx';
 import { ErrorPage } from '@/containers/ErrorPage/ErrorPage.tsx';
 import CreateOrderForm from './containers/OrderCreate/CreateOrderForm';
 import { Orders } from '@/containers/Orders/Orders.tsx';
+import { OrderDetails } from '@/containers/Orders/OrderDetails.tsx';
 import UsersPageContainer from './containers/Users/UsersPage';
 
 export const App = () => {
@@ -18,6 +19,15 @@ export const App = () => {
 						<Route path={'/signUp'} element={<SignUp />}></Route>
 						<Route path={'/signIn'} element={<SignIn />}></Route>
 						<Route path={'/order'} element={<Orders />}></Route>
+						<Route path={'/order'} element={<Orders />}></Route>
+						<Route
+							path={'/order/:filter'}
+							element={<Orders />}
+						></Route>
+						<Route
+							path={'/order/details/:id'}
+							element={<OrderDetails />}
+						></Route>
 						<Route path={'/*'} element={<ErrorPage />}></Route>
 						<Route path={'/user'} element={<UsersPageContainer />}></Route>
 
