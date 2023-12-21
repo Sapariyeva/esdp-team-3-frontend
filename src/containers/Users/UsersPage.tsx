@@ -43,10 +43,7 @@ const UsersPageContainer = () => {
         dispatch(fetchUsers(requestFilters));
       
     }, [dispatch, filters, currentPage]);
-    const handlePageChange = (newPage: number) => {
-        setCurrentPage(newPage); // Обновляем номер текущей страницы
-
-    };
+   
 
     
 
