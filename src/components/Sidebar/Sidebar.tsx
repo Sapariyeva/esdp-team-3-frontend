@@ -1,20 +1,34 @@
-import { useState } from 'react';
-import { Link } from "react-router-dom";
-import './Sidebar.scss';
+import {useState} from 'react';
+import {MenuFoldOutlined, MenuOutlined, MenuUnfoldOutlined} from '@ant-design/icons';
+import type { MenuProps } from 'antd';
+import {Button, Dropdown} from 'antd';
+import {Link} from "react-router-dom";
+import './Sidebar.scss'
 
-interface SidebarItem {
-    id: number;
-    title: string;
-    link: string;
-    icon: string; // Добавляем поле для иконки
-}
-
-const sidebarItems: SidebarItem[] = [
-    { id: 1, title: 'Sign in', link: '/signin', icon: '🔑' },
-    { id: 2, title: 'Sign up', link: '/signup', icon: '📝' },
-    { id: 3, title: 'Order List', link: '/order', icon: '📦' },
-    { id: 4, title: 'Create Order Form', link: '/createOrderForm', icon: '🖊️' },
-    { id: 5, title: 'User List', link: '/user', icon: '👥' },
+const items: MenuProps['items'] = [
+    {
+        label: <Link className={'sidebar__link'} to={'/signin'} children={'Sign in'}/>,
+        key: '0',
+    },
+    {
+        label: <Link className={'sidebar__link'} to={'/signup'} children={'Sign up'}/>,
+        key: '1',
+    },
+    {
+        type: 'divider',
+    },
+    {
+        label: <Link className={'sidebar__link'} to={'/order'} children={'Order List'}/>,
+        key: '3',
+    },
+    {
+        label: <Link className={'sidebar__link'} to={'/createOrderForm'} children={'Create order form'}/>,
+        key: '4',
+    },
+    {
+        label: <Link className={'sidebar__link'} to={'/user'} children={'User List'}/>,
+        key: '5',
+    },
 ];
 
 const Sidebar = () => {
@@ -23,23 +37,13 @@ const Sidebar = () => {
         setCollapsed(!collapsed);
     };
 
-    return (
-        <div className={`sidebar ${collapsed ? 'collapsed' : ''}`}>
-            <div className="sidebar__button" onClick={toggleCollapsed}>
-                ---
-            </div>
-            <ul className="sidebar__list">
-                {sidebarItems.map(item => (
-                    <li key={item.id} className="sidebar__item">
-                        <Link to={item.link} className="sidebar__link">
-                            <span className="sidebar__icon">{item.icon}</span>
-                            {!collapsed && <span className="sidebar__title">{item.title}</span>}
-                        </Link>
-                    </li>
-                ))}
-            </ul>
-        </div>
-    );
+    return  <Dropdown className={'sidebar'} menu={{items}} trigger={['click']}>
+        <Button className={'sidebar__button'}
+                type="primary"
+                onClick={toggleCollapsed}
+        >
+            {collapsed ? <MenuOutlined /> : <MenuOutlined/>}
+        </Button>
+    </Dropdown>
 };
-
 export default Sidebar;
