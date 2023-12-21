@@ -45,15 +45,18 @@ export const Orders = () => {
 		}
 	}, [params]);
 	const [current, setCurrent] = useState(1);
+
 	const onChange: PaginationProps['onChange'] = async (page) => {
 		await dispatch(getPageData(`${orderData.links[`page${page}`]!}&`));
 		setCurrent(page);
 	};
+
 	const showModal = async () => {
 		await dispatch(getUserList('manager'));
 		await dispatch(getUserList('customer'));
 		dispatch(setIsModalFilterOpen());
 	};
+
 	return (
 		<>
 			{!idParams && <ModalOrderFilter />}
