@@ -5,6 +5,10 @@ export interface IOrderState {
 	orderData: IOrderList;
 	filterOrder: IOrderCategory;
 	modalFilterOrder: boolean;
+	modalOrderDetails: boolean;
+	orderDetails: {
+		details: IOrder | null;
+	};
 }
 export interface IOrderList {
 	orders: IOrder[];
@@ -31,10 +35,19 @@ export interface IOrder {
 	managerId?: number;
 	managerCommentary?: string;
 	status?: EOrderStatus;
+	customer: IUser | null;
+	manager: IUser | null;
 }
 
 export interface IResponseOrders {
 	data: IOrderList;
+}
+
+export interface IResponseOrder {
+	data: IOrder;
+}
+export interface IResponseUser {
+	data: IUser;
 }
 
 export interface IResponseManagerList {
