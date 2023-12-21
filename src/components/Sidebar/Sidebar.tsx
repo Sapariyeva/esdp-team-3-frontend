@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {MenuFoldOutlined, MenuOutlined, MenuUnfoldOutlined} from '@ant-design/icons';
+import {MenuOutlined} from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import {Button, Dropdown} from 'antd';
 import {Link} from "react-router-dom";
@@ -29,6 +29,14 @@ const items: MenuProps['items'] = [
         label: <Link className={'sidebar__link'} to={'/user'} children={'User List'}/>,
         key: '5',
     },
+    {
+        label: <Link className={'sidebar__link'} to={'http://localhost:8000/order/export-csv'} children={'Order List export'}/>,
+        key: '6',
+    },
+    {
+        label: <Link className={'sidebar__link'} to={'http://localhost:8000/user/export-csv'} children={'User List export'}/>,
+        key: '6',
+    }
 ];
 
 const Sidebar = () => {
