@@ -1,7 +1,9 @@
 import {
+	IOrder,
 	IOrderList,
 	IOrderState,
 	IResponseManagerList,
+	IResponseOrder,
 	IResponseOrders,
 	IToken,
 	IUserOrder,
@@ -21,6 +23,10 @@ const initialState: IOrderState = {
 		listCustomer: [],
 	},
 	modalFilterOrder: false,
+	modalOrderDetails: false,
+	orderDetails: {
+		details: null,
+	},
 };
 
 export const getOrders = createAsyncThunk('getOrders', async (_, thunkApi) => {
@@ -37,6 +43,23 @@ export const getOrders = createAsyncThunk('getOrders', async (_, thunkApi) => {
 		return rejectWithValue('HTTP error post request');
 	}
 });
+export const getOrder = createAsyncThunk(
+	'getOrder',
+	async (id: string, thunkApi) => {
+		const { rejectWithValue, getState } = thunkApi;
+		try {
+			const token = getState() as IToken;
+			const { data }: IResponseOrder = await order.get(`/order/${id}`, {
+				headers: {
+					Authorization: `Bearer ${token?.user.user.accessToken}`,
+				},
+			});
+			return data;
+		} catch (e) {
+			return rejectWithValue('HTTP error post request');
+		}
+	}
+);
 export const getPageData = createAsyncThunk(
 	'getPageData',
 	async (page: string, { rejectWithValue, getState }) => {
@@ -104,11 +127,17 @@ export const orderSlice = createSlice({
 	name: 'orderSlice',
 	initialState,
 	reducers: {
-		setIsModalOpen(state) {
+		setIsModalFilterOpen(state) {
 			state.modalFilterOrder = true;
 		},
-		setIsModalClose(state) {
+		setIsModalFilterClose(state) {
 			state.modalFilterOrder = false;
+		},
+		setIsModalDetailsOpen(state) {
+			state.modalOrderDetails = true;
+		},
+		setIsModalDetailsClose(state) {
+			state.modalOrderDetails = false;
 		},
 	},
 	extraReducers: (builder) => {
@@ -121,6 +150,19 @@ export const orderSlice = createSlice({
 				}
 			)
 			.addCase(getOrders.rejected, () => {})
+
+			.addCase(getOrder.pending, () => {})
+			.addCase(
+				getOrder.fulfilled,
+				(state, action: PayloadAction<IOrder>) => {
+					state.orderDetails!.details = action.payload;
+				}
+			)
+			.addCase(getOrder.rejected, (state) => {
+				state.orderDetails = {
+					details: null,
+				};
+			})
 
 			.addCase(getPageData.pending, () => {})
 			.addCase(
@@ -169,4 +211,9 @@ export const orderSlice = createSlice({
 	},
 });
 
-export const { setIsModalOpen, setIsModalClose } = orderSlice.actions;
+export const {
+	setIsModalFilterOpen,
+	setIsModalFilterClose,
+	setIsModalDetailsOpen,
+	setIsModalDetailsClose,
+} = orderSlice.actions;

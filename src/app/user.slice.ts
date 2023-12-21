@@ -54,7 +54,6 @@ export const signIn = createAsyncThunk(
 			const request = Object.fromEntries(
 				Object.entries(user).filter(([_, value]) => value !== null)
 			);
-			console.log(request);
 			const { data }: IUserSignInResponse = await $api.post(
 				'/user/signIn',
 				request

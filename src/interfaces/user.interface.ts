@@ -3,17 +3,17 @@ import { EUserStatus, EUserSubject } from '@/enum/user.enum.ts';
 
 export interface IUser {
 	id: number;
-    phone: string | null;
-    displayName: string;
+	phone: string | null;
+	displayName: string;
 	email: string | null;
-    password: string | null;
+	password: string | null;
 	birthday: string | null;
 	avatar: string | null;
 	role: ERole;
-    avgRating: number | null;
-    ratingCount: number | null;
-    lastPostition: string | null;
-    identifyingNumber: number | null;
+	avgRating: number | null;
+	ratingCount: number | null;
+	lastPosition: string | null;
+	identifyingNumber: number | null;
 	status: EUserStatus;
 	accessToken?: string | null;
 	refreshToken?: string | null;

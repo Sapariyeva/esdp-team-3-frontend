@@ -6,6 +6,7 @@ import { SignUp } from '@/containers/Authorization/SignUp.tsx';
 import { SignIn } from '@/containers/Authorization/SignIn.tsx';
 import { ErrorPage } from '@/containers/ErrorPage/ErrorPage.tsx';
 import { Orders } from '@/containers/Orders/Orders.tsx';
+import { OrderDetails } from '@/containers/Orders/OrderDetails.tsx';
 
 export const App = () => {
 	return (
@@ -16,6 +17,15 @@ export const App = () => {
 						<Route path={'/signUp'} element={<SignUp />}></Route>
 						<Route path={'/signIn'} element={<SignIn />}></Route>
 						<Route path={'/order'} element={<Orders />}></Route>
+						<Route path={'/order'} element={<Orders />}></Route>
+						<Route
+							path={'/order/:filter'}
+							element={<Orders />}
+						></Route>
+						<Route
+							path={'/order/details/:id'}
+							element={<OrderDetails />}
+						></Route>
 						<Route path={'/*'} element={<ErrorPage />}></Route>
 					</Route>
 				</Routes>

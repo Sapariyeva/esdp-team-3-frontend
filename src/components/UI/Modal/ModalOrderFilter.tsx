@@ -1,5 +1,9 @@
 import { Button, Flex, Form, Modal, Radio, Select, Typography } from 'antd';
-import { getFilterOrders, setIsModalClose } from '@/app/order.slice.ts';
+import {
+	getFilterOrders,
+	getOrders,
+	setIsModalFilterClose,
+} from '@/app/order.slice.ts';
 import { useAppDispatch, useAppSelector } from '@/app/store.ts';
 import { IStateFilter } from '@/interfaces/filter.interface.ts';
 import {
@@ -7,7 +11,11 @@ import {
 	modalFilterStyle,
 } from '@/components/UI/Modal/modal.config.ts';
 import './modalFilter.scss';
-export const ModalFilter = () => {
+import {
+	modalOrderFilterContainer,
+	modalOrderFilterFormContainer,
+} from '@/containers/Orders/OrderDetailsStyle.config.ts';
+export const ModalOrderFilter = () => {
 	const dispatch = useAppDispatch();
 	const { filterOrder, modalFilterOrder } = useAppSelector(
 		(store) => store.order
@@ -34,14 +42,14 @@ export const ModalFilter = () => {
 		{ label: 'Требует платеж', value: 'REQUIRES_PAYMENT' },
 		{ label: 'Сделано', value: 'DONE' },
 	];
-	const optionsCategory = [
-		{ label: 'Грузчик', value: 'Грузчик' },
-		{ label: 'Грузовой транспорт', value: 'Грузовой транспорт' },
+	const optionsService = [
+		{ label: 'Грузчик', value: '1' },
+		{ label: 'Грузовой транспорт', value: '2' },
 	];
 	const optionsSort = [
-		{ label: 'Сначала новые', value: 'Сначала новые' },
-		{ label: 'Сначала старые', value: 'Сначала старые' },
-		{ label: 'По дате исполнения', value: 'По дате исполнения' },
+		{ label: 'Сначала новые', value: 'ASC&sortBy=createdAt' },
+		{ label: 'Сначала старые', value: 'DESC&sortBy=createdAt' },
+		{ label: 'По дате исполнения', value: 'ASC&sortBy=orderData' },
 	];
 	return (
 		<>
@@ -50,40 +58,34 @@ export const ModalFilter = () => {
 				open={modalFilterOrder}
 				footer={null}
 				onCancel={() => {
-					dispatch(setIsModalClose());
+					dispatch(setIsModalFilterClose());
 				}}
 				cancelButtonProps={{ style: { display: 'none' } }}
 			>
-				<Flex
-					vertical
-					justify={'center'}
-					align={'center'}
-					gap={'20px'}
-					style={{ width: '100%' }}
-				>
+				<Flex style={modalOrderFilterContainer}>
 					<Form
 						name="dynamic_form_nest_item"
 						onFinish={onFinish}
 						form={form}
 						initialValues={{
-							category: null,
+							service: null,
 							sort: null,
 							manager: null,
 							status: null,
 							customer: null,
 						}}
 					>
-						<Flex vertical gap={'10px'}>
+						<Flex style={modalOrderFilterFormContainer}>
 							<Typography.Title level={5}>
 								Категория
 							</Typography.Title>
-							<Form.Item name="category">
+							<Form.Item name="service">
 								<Radio.Group
 									className="radio-custom"
 									size="middle"
 									style={modalFilterStyle}
 								>
-									{optionsCategory.map((item, index) => (
+									{optionsService.map((item, index) => (
 										<Radio.Button
 											style={modalFilterRadioButtonStyle}
 											value={item.value}
@@ -99,11 +101,11 @@ export const ModalFilter = () => {
 							</Form.Item>
 						</Flex>
 
-						<Flex vertical gap={'10px'}>
+						<Flex style={modalOrderFilterFormContainer}>
 							<Typography.Title level={5}>
 								Сортировка
 							</Typography.Title>
-							<Form.Item name="sort">
+							<Form.Item name="sortOrder">
 								<Radio.Group
 									className="radio-custom"
 									size="middle"
@@ -124,7 +126,7 @@ export const ModalFilter = () => {
 								</Radio.Group>
 							</Form.Item>
 						</Flex>
-						<Flex vertical gap={'10px'}>
+						<Flex style={modalOrderFilterFormContainer}>
 							<Typography.Title level={5}>
 								Менеджер
 							</Typography.Title>
@@ -149,7 +151,7 @@ export const ModalFilter = () => {
 								</Select>
 							</Form.Item>
 						</Flex>
-						<Flex vertical gap={'10px'}>
+						<Flex style={modalOrderFilterFormContainer}>
 							<Typography.Title level={5}>
 								Статус
 							</Typography.Title>
@@ -174,7 +176,7 @@ export const ModalFilter = () => {
 								</Radio.Group>
 							</Form.Item>
 						</Flex>
-						<Flex vertical gap={'10px'}>
+						<Flex style={modalOrderFilterFormContainer}>
 							<Typography.Title level={5}>
 								Заказчик
 							</Typography.Title>
@@ -209,6 +211,16 @@ export const ModalFilter = () => {
 								Применить
 							</Button>
 						</Form.Item>
+						<Button
+							type="text"
+							onClick={async () => {
+								form.resetFields();
+								await dispatch(getOrders());
+							}}
+							style={{ display: 'block', margin: '0 auto' }}
+						>
+							Сброить все фильтры
+						</Button>
 					</Form>
 				</Flex>
 			</Modal>
