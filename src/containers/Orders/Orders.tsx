@@ -29,15 +29,18 @@ export const Orders = () => {
 		dispatch(getOrders());
 	}, []);
 	const [current, setCurrent] = useState(1);
+
 	const onChange: PaginationProps['onChange'] = async (page) => {
 		await dispatch(getPageData(`${orderData.links[`page${page}`]!}&`));
 		setCurrent(page);
 	};
+
 	const showModal = async () => {
 		await dispatch(getUserList('manager'));
 		await dispatch(getUserList('customer'));
 		dispatch(setIsModalOpen());
 	};
+
 	return (
 		<>
 			<ModalFilter />
@@ -125,10 +128,9 @@ export const Orders = () => {
 										<>
 											{orderData.orders.map(
 												(item, index) => (
-													<Col span={12}>
+													<Col span={12} key={index} >
 														<Order
 															{...item}
-															key={index}
 														/>
 													</Col>
 												)

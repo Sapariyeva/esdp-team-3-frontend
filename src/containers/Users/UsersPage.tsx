@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchUsers } from '@/app/userList.slice';
 import SearchBar from '@/components/UserList/SearchBar';
 import { useAppDispatch, useAppSelector } from '@/app/store';
@@ -7,7 +7,7 @@ import { IUser } from '@/interfaces/user.interface';
 
 const UsersPageContainer = () => {
     const dispatch = useAppDispatch();
-    const users = useAppSelector((state) => state.users.userList);
+    const users = useAppSelector((state) => state.userList.userList);
     const [searchField, setSearchField] = useState('displayName');
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -22,15 +22,12 @@ const UsersPageContainer = () => {
     const getFilteredUsers = (): IUser[] => {
         if (!searchTerm) return users;
         return users.filter((user) => {
-            const key = searchField as keyof IUser; 
-            const fieldValue = user[key]; 
+            const key = searchField as keyof IUser;
+            const fieldValue = user[key];
             return fieldValue !== null && typeof fieldValue === 'string' && fieldValue.toLowerCase().includes(searchTerm.toLowerCase());
         });
     };
     const filteredUsers = getFilteredUsers();
-
-    
-   
 
     return (
         <div>

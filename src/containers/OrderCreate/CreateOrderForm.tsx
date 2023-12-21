@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Modal, Input, Radio, Select, Button, DatePicker } from 'antd';
-import { fetchManagers, createOrder, fetchUserByPhone } from '@/app/user.slice';
+import { fetchManagers, fetchUserByPhone } from '@/app/user.slice';
 import { RootState, useAppDispatch, useAppSelector } from '@/app/store';
+import { createOrder } from '@/app/order.slice';
+
 
 const { Option } = Select;
 
