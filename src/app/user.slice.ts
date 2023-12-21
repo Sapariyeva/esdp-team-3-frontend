@@ -22,14 +22,16 @@ const initialState: IUserState = {
 		role: ERole.customer,
 		avgRating: 0,
 		ratingCount: 0,
-		lastPostition: '',
+		lastPosition: '',
 		identifyingNumber: 0,
 		status: EUserStatus.ACTIVE,
 		accessToken: '',
-		refreshToken: ''
+		refreshToken: '',
 	},
 	multiRoleSuccess: false,
+	managers: []
 };
+
 export const signUp = createAsyncThunk(
 	'signUp',
 	async (user: IUserSignUpRequest, thunkApi) => {
@@ -49,37 +51,44 @@ export const signUp = createAsyncThunk(
 export const signIn = createAsyncThunk(
 	'signIn',
 	async (user: IUserSignInRequest, { rejectWithValue }) => {
-		console.log(123)
+		console.log(123);
 		try {
 			const request = Object.fromEntries(
 				Object.entries(user).filter(([_, value]) => value !== null)
 			);
-
-			const { data }: IUserSignInResponse = await $api.post('/user/signIn', request);
+			console.log(request);
+			const { data }: IUserSignInResponse = await $api.post(
+				'/user/signIn',
+				request
+			);
 			if (data.payload.accessToken) {
 				return data.payload;
 			} else {
 				return Object.values(data.payload);
 			}
 		} catch (e) {
-			console.log(e)
+			console.log(e);
 			return rejectWithValue('HTTP error signIn');
 		}
 	}
 );
+
 export const signInConfirmRole = createAsyncThunk(
 	'signInConfirmRole',
 	async (user: IUserSignInRequest, thunkApi) => {
 		const { rejectWithValue } = thunkApi;
 		try {
-			const { data }: IUserSignInResponse =
-				await $api.post('/user/signInWithRole', user);
+			const { data }: IUserSignInResponse = await $api.post(
+				'/user/signInWithRole',
+				user
+			);
 			return data.payload;
 		} catch (e) {
 			return rejectWithValue('HTTP error signInConfirmRole');
 		}
 	}
 );
+
 export const signOut = createAsyncThunk(
 	'signOut',
 	async (token: string, { rejectWithValue }) => {
@@ -91,6 +100,32 @@ export const signOut = createAsyncThunk(
 			});
 		} catch (e) {
 			return rejectWithValue('HTTP error signOut');
+		}
+	}
+);
+
+export const fetchManagers = createAsyncThunk(
+	'fetchManagers',
+	async (_, { rejectWithValue }) => {
+		try {
+			const { data } = await $api.get('/user?role=manager');
+			return data.users;
+		} catch (e) {
+			console.error('Ошибка при загрузке менеджеров:', e);
+			return rejectWithValue('HTTP error fetchManagers');
+		}
+	}
+);
+
+export const fetchUserByPhone = createAsyncThunk(
+	'fetchUserByPhone',
+	async (phone: string, { rejectWithValue }) => {
+		try {
+			const response = await $api.get(`/user?phone=${phone}`);
+			return response.data;
+		} catch (error) {
+			console.error('Ошибка при получении данных пользователя:', error);
+			return rejectWithValue('HTTP error fetchUserByPhone');
 		}
 	}
 );
@@ -143,11 +178,27 @@ export const userSlice = createSlice({
 					role: ERole.customer,
 					avgRating: 0,
 					ratingCount: 0,
-					lastPostition: '',
+					lastPosition: '',
 					identifyingNumber: 0,
 					status: EUserStatus.ACTIVE,
 				};
 			})
-			.addCase(signOut.rejected, () => { });
+			.addCase(signOut.rejected, () => { })
+
+			.addCase(fetchManagers.fulfilled, (state, action) => {
+				state.managers = action.payload;
+			})
+			.addCase(fetchManagers.rejected, () => { })
+
+			.addCase(fetchUserByPhone.fulfilled, (state, action) => {
+				if (action.payload.users && action.payload.users.length > 0) {
+					state.user = action.payload.users[0];
+				}
+			})
+
+			.addCase(fetchUserByPhone.rejected, () => {
+
+			});
+
 	},
 });

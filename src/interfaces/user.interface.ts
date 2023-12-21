@@ -12,7 +12,7 @@ export interface IUser {
 	role: ERole;
     avgRating: number | null;
     ratingCount: number | null;
-    lastPostition: string | null;
+    lastPosition: string | null;
     identifyingNumber: number | null;
 	status: EUserStatus;
 	accessToken?: string | null;
@@ -50,6 +50,7 @@ export interface IUserSignInRequest {
 export interface IUserState {
 	user: IUser | IUser[];
 	multiRoleSuccess: boolean;
+	managers: IUser[];
 }
 
 export interface IUserSignInResponseData {

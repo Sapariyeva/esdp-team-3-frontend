@@ -1,24 +1,21 @@
-import axios from 'axios'
-import { Store } from 'redux';
-
-let store: Store
-
-export const injectStore = (_store: Store) => {
-    store = _store
-}
+import axios from 'axios';
 
 const port = 8000;
 export const API_URL = `http://localhost:${port}`;
 
 export const $api = axios.create({
     withCredentials: true,
-    baseURL: API_URL
-})
+    baseURL: API_URL,
+});
+export const order = axios.create({
+    withCredentials: true,
+    baseURL: API_URL,
+});
 
-$api.interceptors.request.use(config => {
+$api.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${localStorage.getItem('token')}`;
     return config;
-})
+});
 
 $api.interceptors.response.use((config) => {
     // Проверяем, что payload и accessToken существуют перед их использованием

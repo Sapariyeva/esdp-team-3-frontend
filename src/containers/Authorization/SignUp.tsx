@@ -114,7 +114,7 @@ export const SignUp = () => {
 	};
 	return (
 		<>
-			<Space direction="vertical" size="middle">
+			<Space className={'space'} direction="vertical" size="middle" style={{display: "flex"}}>
 				<Flex vertical justify={'center'} align={'center'}>
 					<Typography.Title level={2}>Регистрация</Typography.Title>
 					<Form

@@ -1,4 +1,4 @@
-import  { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { fetchUsers } from '@/app/userList.slice';
 import SearchBar from '@/components/UserList/SearchBar';
 import { useAppDispatch, useAppSelector } from '@/app/store';
@@ -18,6 +18,7 @@ interface Filters {
 
 const UsersPageContainer = () => {
     const dispatch = useAppDispatch();
+
     const { userList, totalItems, totalPages, paginationLinks: links } = useAppSelector((state) => state.users);
     const [currentPage, setCurrentPage] = useState(1);
     const pagLinks = useAppSelector((state) => state.users.paginationLinks);
@@ -33,6 +34,7 @@ const UsersPageContainer = () => {
   
     const fetchUsersWithUrl = (url: any) => {
         dispatch(fetchUsers(url));
+
     };
     useEffect(() => {
         const requestFilters = Object.entries(filters).reduce((acc, [key, value]) => {
@@ -47,24 +49,25 @@ const UsersPageContainer = () => {
 
     
 
+
     const handleSearch = (searchField?: string, searchTerm?: string, status?: EUserStatus, role?: ERole) => {
         const newFilters: Filters = {
             ...filters,
             offset: 0, // Сброс пагинации на первую страницу при новом поиске
         };
 
-        // Удаляем предыдущие критерии поиска 
+        
         delete newFilters.displayName;
         delete newFilters.email;
         delete newFilters.phone;
         delete newFilters.identifyingNumber;
 
         if (searchTerm && searchField) {
-            // Применяем поисковый термин к выбранному полю
+            
             newFilters[searchField] = searchTerm;
         }
 
-        // Обновляем role и status только если они выбраны
+        
         if (role) {
             newFilters.role = role;
         } else {
@@ -79,6 +82,7 @@ const UsersPageContainer = () => {
 
         console.log(``, newFilters);
         setFilters(newFilters);
+
     };
 
 
