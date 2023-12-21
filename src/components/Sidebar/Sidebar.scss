@@ -1,14 +1,34 @@
 .sidebar {
-  width: 70px;
+  width: 250px;
   height: 100vh;
   background-color: #f0f0f0;
-  margin: 10px;
-  position: sticky;
+  &.collapsed {
+    width: 50px; // Измените размеры при свёрнутом состоянии
+  }
+  &__button {
+    padding: 10px;
+    cursor: pointer;
+    // Стили для кнопки
+  }
+  &__list {
+    list-style-type: none;
+    padding: 10px;
+  }
+  &__item {
+    margin: 10px 0;
+  }
   &__link {
     text-decoration: none;
     color: black;
     display: flex;
     align-items: center;
-    font-size: 1rem;
+    // Стили для ссылок
+  }
+  &__icon {
+    margin-right: 10px;
+    // Стили для иконок
+  }
+  &__title {
+    // Стили для текстового заголовка
   }
 }
