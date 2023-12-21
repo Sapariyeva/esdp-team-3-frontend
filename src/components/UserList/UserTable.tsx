@@ -1,13 +1,28 @@
-import React from 'react';
-import { Table, TableProps } from 'antd';
+import React, { useState } from 'react';
+import { Pagination, Table, TableProps } from 'antd';
 import { IUser } from '@/interfaces/user.interface';
 import { ERole } from '@/enum/role.enum';
 import { EUserStatus } from '@/enum/user.enum';
+import { useAppDispatch, useAppSelector } from '@/app/store';
+import { fetchUsersWithPaginationLink } from '@/app/userList.slice';
 
-
+interface PaginationLinks {
+    next: string | null;
+    prev: string | null;
+    first: string | null;
+    last: string | null;
+    [key: string]: string | null;
+}
 interface UserTableProps {
     users: IUser[];
+    totalItems: number;
+    totalPages: number;
+    currentPage :number
+    links: PaginationLinks;
+    pageSize: number;
+    fetchUsers: (url: string) => void;
 }
+
 const getFiltersFromEnum = (enumObject: Record<string, string>) => {
     return Object.keys(enumObject).map((key) => ({
         text: enumObject[key],
@@ -15,7 +30,29 @@ const getFiltersFromEnum = (enumObject: Record<string, string>) => {
     }));
 };
 
-const UserTable: React.FC<UserTableProps> = ({ users }) => {
+
+const UserTable: React.FC<UserTableProps> = ({ users, totalItems, pageSize, fetchUsers }) => {
+    const dispatch = useAppDispatch();
+    const [currentPage, setCurrentPage] = useState(1);
+    const paginationLinks = useAppSelector((state) => state.users.paginationLinks);
+
+    
+    const handlePageChange = (pageNumber: number) => {
+        setCurrentPage(pageNumber); 
+        const pageKey = `page${pageNumber}`;
+        const pageLink = paginationLinks[pageKey];
+
+        console.log(`Page link for ${pageKey}:`, pageLink);
+
+
+        if (pageLink) {
+            dispatch(fetchUsersWithPaginationLink(pageLink));
+        } else {
+            console.error(`No link available for ${pageKey}`);
+        }
+    };
+
+
     const columns: TableProps<IUser>['columns'] = [
         {
             title: 'ID',
@@ -100,8 +137,18 @@ const UserTable: React.FC<UserTableProps> = ({ users }) => {
             render: (text: string) => text || 'N/A',
         },
     ];
-
-    return <Table columns={columns} dataSource={users} rowKey="id" />;
+    console.log('users',users)
+    return (
+        <>
+            <Table columns={columns} dataSource={users} rowKey="id" pagination={false} />
+            <Pagination
+                current={currentPage}
+                pageSize={pageSize}
+                total={totalItems}
+                onChange={handlePageChange}
+            />
+        </>
+    );
 };
 
 export default UserTable;

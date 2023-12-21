@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {MenuFoldOutlined, MenuUnfoldOutlined} from '@ant-design/icons';
+import {MenuFoldOutlined, MenuOutlined, MenuUnfoldOutlined} from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import {Button, Dropdown} from 'antd';
 import {Link} from "react-router-dom";
@@ -18,12 +18,16 @@ const items: MenuProps['items'] = [
         type: 'divider',
     },
     {
-        label: <Link className={'sidebar__link'} to={'/order'} children={'Order'}/>,
+        label: <Link className={'sidebar__link'} to={'/order'} children={'Order List'}/>,
         key: '3',
     },
     {
         label: <Link className={'sidebar__link'} to={'/createOrderForm'} children={'Create order form'}/>,
         key: '4',
+    },
+    {
+        label: <Link className={'sidebar__link'} to={'/user'} children={'User List'}/>,
+        key: '5',
     },
 ];
 
@@ -38,7 +42,7 @@ const Sidebar = () => {
                 type="primary"
                 onClick={toggleCollapsed}
         >
-            {collapsed ? <MenuUnfoldOutlined/> : <MenuFoldOutlined/>}
+            {collapsed ? <MenuOutlined /> : <MenuOutlined/>}
         </Button>
     </Dropdown>
 };
