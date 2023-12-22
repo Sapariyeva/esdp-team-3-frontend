@@ -1,5 +1,5 @@
 import './assets/styles/normalize.scss';
-import './assets/styles/reser.scss';
+import './assets/styles/reset.scss';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { Layout } from '@/containers/Layout/Layout.tsx';
 import { SignUp } from '@/containers/Authorization/SignUp.tsx';
@@ -30,6 +30,7 @@ export const App = () => {
 						></Route>
 						<Route path={'/*'} element={<ErrorPage />}></Route>
 						<Route path={'/user'} element={<UsersPageContainer />}></Route>
+
 						<Route path={'/createOrderForm'} element={<CreateOrderForm />}></Route>
 					</Route>
 				</Routes>

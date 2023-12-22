@@ -17,7 +17,7 @@ interface UserTableProps {
     users: IUser[];
     totalItems: number;
     totalPages: number;
-    currentPage :number
+    currentPage: number
     links: PaginationLinks;
     pageSize: number;
     fetchUsers: (url: string) => void;
@@ -36,9 +36,9 @@ const UserTable: React.FC<UserTableProps> = ({ users, totalItems, pageSize, fetc
     const [currentPage, setCurrentPage] = useState(1);
     const paginationLinks = useAppSelector((state) => state.users.paginationLinks);
 
-    
+
     const handlePageChange = (pageNumber: number) => {
-        setCurrentPage(pageNumber); 
+        setCurrentPage(pageNumber);
         const pageKey = `page${pageNumber}`;
         const pageLink = paginationLinks[pageKey];
 
@@ -123,7 +123,7 @@ const UserTable: React.FC<UserTableProps> = ({ users, totalItems, pageSize, fetc
             sorter: (a, b) => {
                 const numA = a.identifyingNumber !== null ? a.identifyingNumber.toString() : '';
                 const numB = b.identifyingNumber !== null ? b.identifyingNumber.toString() : '';
-                return numA.localeCompare(numB, undefined, { numeric: true }); 
+                return numA.localeCompare(numB, undefined, { numeric: true });
             },
             render: (text: number | null) => text !== null ? text.toString() : 'N/A',
         },
@@ -137,7 +137,6 @@ const UserTable: React.FC<UserTableProps> = ({ users, totalItems, pageSize, fetc
             render: (text: string) => text || 'N/A',
         },
     ];
-    console.log('users',users)
     return (
         <>
             <Table columns={columns} dataSource={users} rowKey="id" pagination={false} />

@@ -29,8 +29,7 @@ const initialState: IOrderState = {
 	},
 };
 
-export const getOrders = createAsyncThunk('getOrders', async (_, thunkApi) => {
-	const { rejectWithValue } = thunkApi;
+export const getOrders = createAsyncThunk('getOrders', async (_, { rejectWithValue }) => {
 	try {
 		const { data }: IResponseOrders = await $api.get(`/order`);
 		return data;
@@ -41,15 +40,9 @@ export const getOrders = createAsyncThunk('getOrders', async (_, thunkApi) => {
 
 export const getOrder = createAsyncThunk(
 	'getOrder',
-	async (id: string, thunkApi) => {
-		const { rejectWithValue, getState } = thunkApi;
+	async (id: string, { rejectWithValue }) => {
 		try {
-			const token = getState() as IToken;
-			const { data }: IResponseOrder = await order.get(`/order/${id}`, {
-				headers: {
-					Authorization: `Bearer ${token?.user.user.accessToken}`,
-				},
-			});
+			const { data }: IResponseOrder = await $api.get(`/order/${id}`);
 			return data;
 		} catch (e) {
 			return rejectWithValue('HTTP error post request');
@@ -72,9 +65,7 @@ export const getUserList = createAsyncThunk(
 	'getUserList',
 	async (role: string, { rejectWithValue }) => {
 		try {
-			const { data }: IResponseManagerList = await $api.get(
-				`/user?role=${role}`
-			);
+			const { data }: IResponseManagerList = await $api.get(`/user?role=${role}`);
 			const userList = data.users.map(({ id, displayName }) => ({
 				id,
 				displayName,
@@ -108,8 +99,6 @@ export const createOrder = createAsyncThunk(
 	async (order: IOrderRequest, { rejectWithValue }) => {
 		try {
 			const response = await $api.post('/order', order);
-			console.log(response);
-
 			return response.data;
 		} catch (e) {
 			console.error('Error while creating order:', e);
@@ -146,7 +135,7 @@ export const orderSlice = createSlice({
 			)
 			.addCase(getOrders.rejected, () => { })
 
-			.addCase(getOrder.pending, () => {})
+			.addCase(getOrder.pending, () => { })
 			.addCase(
 				getOrder.fulfilled,
 				(state, action: PayloadAction<IOrder>) => {
@@ -159,8 +148,8 @@ export const orderSlice = createSlice({
 				};
 			})
 
-			.addCase(getPageData.pending, () => {})
-    
+			.addCase(getPageData.pending, () => { })
+
 			.addCase(
 				getPageData.fulfilled,
 				(state, action: PayloadAction<IOrderList>) => {

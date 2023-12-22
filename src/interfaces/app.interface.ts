@@ -1,5 +1,5 @@
 export interface IAppState {
-	modal: boolean;
+    modal: boolean;
 }
 
 export interface IApiError {

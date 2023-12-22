@@ -114,7 +114,7 @@ export const SignUp = () => {
 	};
 	return (
 		<>
-			<Space className={'space'} direction="vertical" size="middle" style={{display: "flex"}}>
+			<Space className={'space'} direction="vertical" size="middle" style={{ display: "flex" }}>
 				<Flex vertical justify={'center'} align={'center'}>
 					<Typography.Title level={2}>Регистрация</Typography.Title>
 					<Form
@@ -269,7 +269,7 @@ export const SignUp = () => {
 									</Radio.Group>
 								</Form.Item>
 								{stateValueForm.subject ===
-								EUserSubject.LEGAL ? (
+									EUserSubject.LEGAL ? (
 									<>
 										<Form.Item
 											name="identifyingNumber"

@@ -10,7 +10,7 @@ export const store = configureStore({
 		user: userSlice.reducer,
 		app: appSlice.reducer,
 		order: orderSlice.reducer,
-		userList: userListSlice.reducer
+		users: userListSlice.reducer
 	},
 });
 export type AppDispatch = typeof store.dispatch;

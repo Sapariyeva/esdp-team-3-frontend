@@ -27,11 +27,11 @@ const UsersPageContainer = () => {
         offset: 0,
         limit: 10,
         role: undefined,
-        status: undefined, 
+        status: undefined,
     });
-   
-    
-  
+
+
+
     const fetchUsersWithUrl = (url: any) => {
         dispatch(fetchUsers(url));
 
@@ -41,13 +41,13 @@ const UsersPageContainer = () => {
             if (value !== undefined) acc[key] = value;
             return acc;
         }, {} as Filters);
-       
-        dispatch(fetchUsers(requestFilters));
-      
-    }, [dispatch, filters, currentPage]);
-   
 
-    
+        dispatch(fetchUsers(requestFilters));
+
+    }, [dispatch, filters, currentPage]);
+
+
+
 
 
     const handleSearch = (searchField?: string, searchTerm?: string, status?: EUserStatus, role?: ERole) => {
@@ -56,18 +56,18 @@ const UsersPageContainer = () => {
             offset: 0, // Сброс пагинации на первую страницу при новом поиске
         };
 
-        
+
         delete newFilters.displayName;
         delete newFilters.email;
         delete newFilters.phone;
         delete newFilters.identifyingNumber;
 
         if (searchTerm && searchField) {
-            
+
             newFilters[searchField] = searchTerm;
         }
 
-        
+
         if (role) {
             newFilters.role = role;
         } else {
@@ -80,7 +80,6 @@ const UsersPageContainer = () => {
             delete newFilters.status;
         }
 
-        console.log(``, newFilters);
         setFilters(newFilters);
 
     };

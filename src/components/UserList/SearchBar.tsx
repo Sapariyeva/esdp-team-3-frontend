@@ -1,5 +1,5 @@
-import React, {useState } from 'react';
-import {  Input, Select } from 'antd';
+import React, { useState } from 'react';
+import { Input, Select } from 'antd';
 import { ERole } from '@/enum/role.enum';
 import { EUserStatus } from '@/enum/user.enum';
 
@@ -15,7 +15,7 @@ const SearchBar: React.FC<ISearchBarProps> = ({ onSearch }) => {
     const [searchTerm, setSearchTerm] = useState<string>('');
     const [status, setStatus] = useState<EUserStatus | undefined>();
     const [role, setRole] = useState<ERole | undefined>();
-    
+
     const handleSearchFieldChange = (value: string) => {
         setSearchField(value);
     };
@@ -29,7 +29,7 @@ const SearchBar: React.FC<ISearchBarProps> = ({ onSearch }) => {
     };
 
     const handleSearch = (value: string) => {
-      
+
         setSearchTerm(value);
         onSearch(searchField, value, status, role);
     };

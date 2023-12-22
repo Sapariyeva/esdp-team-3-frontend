@@ -34,8 +34,7 @@ const initialState: IUserState = {
 
 export const signUp = createAsyncThunk(
 	'signUp',
-	async (user: IUserSignUpRequest, thunkApi) => {
-		const { rejectWithValue } = thunkApi;
+	async (user: IUserSignUpRequest, { rejectWithValue }) => {
 		const request = Object.fromEntries(
 			Object.entries(user).filter(([_, value]) => value !== null)
 		);
@@ -51,7 +50,6 @@ export const signUp = createAsyncThunk(
 export const signIn = createAsyncThunk(
 	'signIn',
 	async (user: IUserSignInRequest, { rejectWithValue }) => {
-		console.log(123);
 		try {
 			const request = Object.fromEntries(
 				Object.entries(user).filter(([_, value]) => value !== null)
@@ -74,8 +72,7 @@ export const signIn = createAsyncThunk(
 
 export const signInConfirmRole = createAsyncThunk(
 	'signInConfirmRole',
-	async (user: IUserSignInRequest, thunkApi) => {
-		const { rejectWithValue } = thunkApi;
+	async (user: IUserSignInRequest, { rejectWithValue }) => {
 		try {
 			const { data }: IUserSignInResponse = await $api.post(
 				'/user/signInWithRole',
@@ -194,10 +191,6 @@ export const userSlice = createSlice({
 					state.user = action.payload.users[0];
 				}
 			})
-
-			.addCase(fetchUserByPhone.rejected, () => {
-
-			});
-
+			.addCase(fetchUserByPhone.rejected, () => { });
 	},
 });
