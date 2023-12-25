@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Flex, Input, Modal, Space, Typography } from 'antd';
+import { Button, Drawer, Flex, Input, Space, Typography } from 'antd';
 import { ERole } from '@/enum/role.enum';
 import { ESearchFields, EUserStatus } from '@/enum/user.enum';
 import {  FilterOutlined, SearchOutlined} from '@ant-design/icons';
@@ -8,7 +8,7 @@ interface SearchBarProps {
     onSearch: (searchTerm: string, selectedStatus?: EUserStatus, selectedRole?: ERole, selectedSearchField?: ESearchFields) => void;
 }
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
-    const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
+    const [isFilterDrawerVisible, setIsFilterDrawerVisible] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStatus, setSelectedStatus] = useState<EUserStatus | null>(null);
     const [selectedRole, setSelectedRole] = useState<ERole | null>(null);
@@ -36,42 +36,48 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
 
     const handleApplyFilters = () => {
         onSearch(searchTerm, selectedStatus ?? undefined, selectedRole ?? undefined, selectedSearchField ?? undefined);
-        setIsFilterModalVisible(false);
+        setIsFilterDrawerVisible(false);
     };
 
 
     return (
         <>
-            <div className="searchBarContainer">
+            <div className="searchBarContainer" style={{ display: 'flex', alignItems: 'stretch' }}>
                 <Input.Search
                     placeholder="Enter search term..."
                     onSearch={handleSearch}
                     enterButton={<SearchOutlined />}
                     className="searchInput"
+                    style={{
+                        flex: 1,
+                       
+                    }}
                 />
                 <Button
                     icon={<FilterOutlined />}
-                    onClick={() => setIsFilterModalVisible(true)}
+                    onClick={() => setIsFilterDrawerVisible(true)}
                     className="filterButton"
+                    style={{
+                        alignSelf: 'stretch',
+                        boxSizing: 'border-box',
+                        marginLeft: '0',
+                        
+                    }}
                 />
             </div>
 
-            <Modal
+
+            
+            <Drawer
+                style={{ position: 'fixed' }}
                 title="Настройки фильтра"
-                visible={isFilterModalVisible}
-                onOk={handleApplyFilters}
-                onCancel={() => setIsFilterModalVisible(false)}
-                width="100%" 
-                className="modalCustomStyle"
-                footer={[
-                    <Button
-                        key="submit"
-                        type="primary"
-                        onClick={handleApplyFilters}
-                    >
-                        Применить
-                    </Button>
-                ]}
+                placement="right"
+                closable={true}
+                onClose={() => setIsFilterDrawerVisible(false)}
+                visible={isFilterDrawerVisible}
+                getContainer={false}
+                bodyStyle={{ paddingBottom: 80 }}
+                 
             >
                 <Space direction="vertical" size="middle">
                     <Flex
@@ -142,7 +148,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                         </Flex>
                     </Flex>
                 </Space>
-            </Modal>
+            </Drawer>
         </>
     );
 };

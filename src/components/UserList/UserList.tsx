@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import { Avatar, List, Pagination } from 'antd';
+import { Avatar, Button, List, Pagination } from 'antd';
 import { IUser } from '@/interfaces/user.interface';
 import './UserList.scss';
 import { useAppDispatch, useAppSelector } from '@/app/store';
 import { fetchUsersWithPaginationLink } from '@/app/userList.slice';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 interface UserListProps {
     users: IUser[];
     totalItems: number;
@@ -21,6 +21,11 @@ const UserList: React.FC<UserListProps> = ({
     const dispatch = useAppDispatch();
     const [currentPage, setCurrentPage] = useState(1);
     const paginationLinks = useAppSelector((state) => state.users.paginationLinks);
+    const navigate = useNavigate();
+
+    const goToCreateUser = () => {
+        navigate('/createUserForm'); 
+    };
 
     const handlePageChange = (pageNumber: number) => {
         setCurrentPage(pageNumber);
@@ -35,22 +40,51 @@ const UserList: React.FC<UserListProps> = ({
     };
 
     return (
-        <div className="user-list-container">
+        <div style={{ padding: '0 20px' }}> 
             <List
                 itemLayout="horizontal"
                 dataSource={users}
                 renderItem={user => (
-                    <List.Item>
-                        <List.Item.Meta
-                            avatar={
-                                <Avatar
-                                    src={user.avatar || 'path-to-default-avatar.png'}
-                                />
-                            }
-                            title={<Link to={`/user/${user.id}`}>{user.displayName}</Link>}
-                            description={user.phone || 'N/A'}
-                        />
-                    </List.Item>
+                    <Link to={`/user/${user.id}`} style={{ textDecoration: 'none' }}>
+                        <List.Item
+                            style={{
+                                padding: '10px', 
+                                cursor: 'pointer', 
+                                borderRadius: '5px',
+                                transition: 'all 0.3s ease', 
+                                display: 'block', 
+                                backgroundColor:'#ffffff'
+                            }}
+                            onMouseEnter={e => {
+                                e.currentTarget.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+                                e.currentTarget.style.transform = 'scale(1.01)';
+                                e.currentTarget.style.backgroundColor = '#f7f7f7';
+                            }}
+                            onMouseLeave={e => {
+                                e.currentTarget.style.boxShadow = '';
+                                e.currentTarget.style.transform = '';
+                                e.currentTarget.style.backgroundColor = '#ffffff';
+                            }}
+                            onMouseDown={e => {
+                                e.currentTarget.style.boxShadow = '0 5px 15px rgba(0,0,0,0.3)';
+                                e.currentTarget.style.transform = 'scale(0.99)';
+                            }}
+                            onMouseUp={e => {
+                                e.currentTarget.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+                                e.currentTarget.style.transform = 'scale(1.01)';
+                            }}
+                        >
+                            <List.Item.Meta
+                                avatar={
+                                    <Avatar
+                                        src={user.avatar || 'path-to-default-avatar.png'}
+                                    />
+                                }
+                                title={user.displayName}
+                                description={user.phone || 'N/A'}
+                            />
+                        </List.Item>
+                    </Link>
                 )}
             />
             <Pagination
@@ -58,7 +92,15 @@ const UserList: React.FC<UserListProps> = ({
                 pageSize={pageSize}
                 total={totalItems}
                 onChange={handlePageChange}
+                style={{
+                    marginTop: '20px', 
+                }}
             />
+            <div style={{ padding: '0 20px' }}>
+                <Button type="primary" onClick={goToCreateUser} style={{ marginBottom: '16px' }}>
+                    Добавить пользователя
+                </Button>
+            </div>
         </div>
     );
 };
