@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { fetchUsers } from '@/app/userList.slice';
 import SearchBar from '@/components/UserList/SearchBar';
 import { useAppDispatch, useAppSelector } from '@/app/store';
-import UserTable from '@/components/UserList/UserTable';
-import { EUserStatus } from '@/enum/user.enum';
+import UserList from '@/components/UserList/UserList';
+import { ESearchFields, EUserStatus } from '@/enum/user.enum';
 import { ERole } from '@/enum/role.enum';
 interface Filters {
     offset: number;
@@ -19,15 +19,13 @@ interface Filters {
 const UsersPageContainer = () => {
     const dispatch = useAppDispatch();
 
-    const { userList, totalItems, totalPages, paginationLinks: links } = useAppSelector((state) => state.users);
+    const { userList, totalItems } = useAppSelector((state) => state.users);
     const [currentPage, setCurrentPage] = useState(1);
-    const pagLinks = useAppSelector((state) => state.users.paginationLinks);
-    const users = useAppSelector((state) => state.users.userList);
     const [filters, setFilters] = useState<Filters>({
         offset: 0,
         limit: 10,
-        role: undefined,
         status: undefined,
+        role: undefined,
     });
 
 
@@ -41,7 +39,8 @@ const UsersPageContainer = () => {
             if (value !== undefined) acc[key] = value;
             return acc;
         }, {} as Filters);
-
+        console.log(`filters`, filters);
+console.log(`requestFilters`, requestFilters);
         dispatch(fetchUsers(requestFilters));
 
     }, [dispatch, filters, currentPage]);
@@ -50,23 +49,22 @@ const UsersPageContainer = () => {
 
 
 
-    const handleSearch = (searchField?: string, searchTerm?: string, status?: EUserStatus, role?: ERole) => {
+    const handleSearch = (searchTerm: string, status?: EUserStatus, role?: ERole, selectedSearchField?: ESearchFields) => {
         const newFilters: Filters = {
             ...filters,
-            offset: 0, // Сброс пагинации на первую страницу при новом поиске
+            offset: 0, 
         };
 
-
+      
         delete newFilters.displayName;
         delete newFilters.email;
         delete newFilters.phone;
         delete newFilters.identifyingNumber;
 
-        if (searchTerm && searchField) {
-
-            newFilters[searchField] = searchTerm;
+        
+        if (searchTerm && selectedSearchField) {
+            newFilters[selectedSearchField] = searchTerm;
         }
-
 
         if (role) {
             newFilters.role = role;
@@ -81,24 +79,16 @@ const UsersPageContainer = () => {
         }
 
         setFilters(newFilters);
-
     };
 
 
     return (
         <div>
             <SearchBar onSearch={handleSearch} />
-            <UserTable
+            <UserList
                 users={userList}
                 totalItems={totalItems}
-                totalPages={totalPages}
                 currentPage={currentPage}
-                links={{
-                    next: links.next,
-                    prev: links.prev,
-                    first: links.first,
-                    last: links.last,
-                }}
                 pageSize={filters.limit}
                 fetchUsers={fetchUsersWithUrl}
             />

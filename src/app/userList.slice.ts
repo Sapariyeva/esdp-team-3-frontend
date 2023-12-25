@@ -17,6 +17,7 @@ interface UsersResponse {
 }
 interface UserState {
     userList: IUser[];
+    currentUser:IUser|null;
     filter: string;
     searchQuery: string;
     loading: boolean;
@@ -38,6 +39,7 @@ interface FetchUsersParams {
 
 const initialState: UserState = {
     userList: [],
+    currentUser: null,
     filter: '',
     searchQuery: '',
     loading: false,
@@ -75,6 +77,22 @@ export const fetchUsers = createAsyncThunk(
         }
     }
 );
+export const fetchUserById = createAsyncThunk(
+    'users/fetchUserById',
+    async (userId: string, { rejectWithValue }) => {
+        try {
+            const response = await $api.get(`/user/${userId}`);
+            return response.data;
+        } catch (error) {
+            if (axios.isAxiosError(error)) {
+                return rejectWithValue(error.response?.data || error.message);
+            } else {
+                return rejectWithValue('An unexpected error occurred');
+            }
+        }
+    }
+);
+
 
 export const fetchUsersWithPaginationLink = createAsyncThunk(
     'users/fetchUsersWithPaginationLink',
@@ -133,6 +151,20 @@ export const userListSlice = createSlice({
             })
             .addCase(fetchUsers.rejected, (state, action) => {
                 state.loading = false;
+                state.error = action.payload as string || 'Unknown error occurred';
+            })
+            // обработчики для fetchUserById
+            .addCase(fetchUserById.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(fetchUserById.fulfilled, (state, action: PayloadAction<IUser>) => {
+                state.currentUser = action.payload;
+                state.loading = false;
+            })
+            .addCase(fetchUserById.rejected, (state, action) => {
+                state.loading = false;
+                state.currentUser = null;
                 state.error = action.payload as string || 'Unknown error occurred';
             })
             // обработчики для fetchUsersWithPaginationLink

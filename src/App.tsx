@@ -9,6 +9,8 @@ import CreateOrderForm from './containers/OrderCreate/CreateOrderForm';
 import { Orders } from '@/containers/Orders/Orders.tsx';
 import { OrderDetails } from '@/containers/Orders/OrderDetails.tsx';
 import UsersPageContainer from './containers/Users/UsersPage';
+import UserDetail from './components/UserList/UserDetail';
+import CreateUserForm from './components/UserList/CreateUserForm';
 
 export const App = () => {
 	return (
@@ -29,9 +31,13 @@ export const App = () => {
 							element={<OrderDetails />}
 						></Route>
 						<Route path={'/*'} element={<ErrorPage />}></Route>
+                        
 						<Route path={'/user'} element={<UsersPageContainer />}></Route>
-
-						<Route path={'/createOrderForm'} element={<CreateOrderForm />}></Route>
+                        <Route path={'/user/:id'} element={<UserDetail />}></Route>
+                        <Route path={'/createUserForm'} element={<CreateUserForm />}></Route>
+						<Route path={'/createOrderForm'} element={<CreateOrderForm />}>
+                            
+                        </Route>
 					</Route>
 				</Routes>
 			</BrowserRouter>
