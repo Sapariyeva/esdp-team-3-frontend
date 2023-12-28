@@ -1,4 +1,4 @@
-import { Button, ConfigProvider, Flex, Modal, Space, Typography } from 'antd';
+import { Button, ConfigProvider, Flex, Modal, Typography } from 'antd';
 import {
     modalOrderContainer,
     orderDetailsModalStyle,

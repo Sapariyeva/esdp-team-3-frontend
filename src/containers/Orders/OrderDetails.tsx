@@ -26,7 +26,7 @@ export const OrderDetails = () => {
 							<Typography.Title level={4}>Куда:&nbsp;</Typography.Title>
 						</Col>
 						<Col>
-							<Typography.Title level={4}>{ }</Typography.Title>
+							<Typography.Title level={4}>{orderDetails.details.address}</Typography.Title>
 						</Col>
 					</Row>
 					: ''

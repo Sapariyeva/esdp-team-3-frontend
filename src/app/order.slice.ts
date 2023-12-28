@@ -126,7 +126,6 @@ export const orderSlice = createSlice({
 			state.modalOrderPerformers = false;
 		},
 		setIsModalOrderPerformers(state) {
-			console.log('state.modalOrderPerformers: ', state.modalOrderPerformers);
 			state.modalOrderPerformers = !state.modalOrderPerformers;
 		},
 	},
