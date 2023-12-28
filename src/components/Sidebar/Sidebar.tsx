@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { DownloadOutlined, HomeOutlined, OrderedListOutlined, TeamOutlined, UserAddOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
-import './Sidebar.scss'
 import Sider from 'antd/es/layout/Sider';
 import { useAppDispatch } from '@/app/store';
 import { exportOrderListToCSV } from '@/app/order.slice';
-import { exportUserListToCSV } from '@/app/user.slice';
+import { exportUserListToCSV, signOut } from '@/app/user.slice';
+import './Sidebar.scss'
 
 type MenuItem = Required<MenuProps>['items'][number];
 
@@ -89,6 +89,15 @@ const Sidebar = () => {
                     key: 'user/export-csv',
                 },
             ],
+        },
+        {
+            label: (
+                <span onClick={() => dispatch(signOut())}>
+                    Sign out
+                </span>
+            ),
+            key: 'signout',
+            icon: <TeamOutlined />
         },
     ];
 

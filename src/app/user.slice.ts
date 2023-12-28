@@ -89,13 +89,19 @@ export const signInConfirmRole = createAsyncThunk(
 
 export const signOut = createAsyncThunk(
 	'signOut',
-	async (token: string, { rejectWithValue }) => {
+	async (_, { rejectWithValue }) => {
 		try {
-			await $api.post('/user/signOut', null, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
+			const { data } = await $api.post('/user/signOut');
+			if (data.success) {
+				console.log('accessToken before remove: ', localStorage.getItem('token'))
+				localStorage.removeItem('token');
+				console.log('accessToken after remove: ', localStorage.getItem('token'))
+				console.log('refreshToken before remove: ', localStorage.getItem('refreshToken'))
+				localStorage.removeItem('refreshToken');
+				console.log('refreshToken after remove: ', localStorage.getItem('refreshToken'))
+			} else {
+				console.error('Failed to sign out');
+			}
 		} catch (e) {
 			return rejectWithValue('HTTP error signOut');
 		}
@@ -158,6 +164,7 @@ export const userSlice = createSlice({
 				signIn.fulfilled,
 				(state, action: PayloadAction<IUser | IUser[]>) => {
 					const { payload } = action;
+					console.log('payload: ', payload);
 					if (Array.isArray(payload)) {
 						state.user = payload;
 						state.multiRoleSuccess = true;
