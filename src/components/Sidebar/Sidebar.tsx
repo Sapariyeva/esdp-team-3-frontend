@@ -1,57 +1,109 @@
 import { useState } from 'react';
-import { MenuOutlined } from '@ant-design/icons';
+import { DownloadOutlined, HomeOutlined, OrderedListOutlined, TeamOutlined, UserAddOutlined, UserOutlined } from '@ant-design/icons';
 import type { MenuProps } from 'antd';
-import { Button, Dropdown } from 'antd';
-import { Link } from "react-router-dom";
+import { Menu } from 'antd';
 import './Sidebar.scss'
+import Sider from 'antd/es/layout/Sider';
 
-const items: MenuProps['items'] = [
+type MenuItem = Required<MenuProps>['items'][number];
+
+const items: MenuItem[] = [
     {
-        label: <Link className={'sidebar__link'} to={'/signin'} children={'Sign in'} />,
-        key: '0',
+        label: (
+            <a href="/">
+                Home
+            </a>
+        ),
+        key: 'home',
+        icon: <HomeOutlined />
     },
     {
-        label: <Link className={'sidebar__link'} to={'/signup'} children={'Sign up'} />,
-        key: '1',
+        type: 'divider'
     },
     {
-        type: 'divider',
+        label: (
+            <a href="/signin">
+                Sign in
+            </a>
+        ),
+        key: 'signin',
+        icon: <UserOutlined />
     },
     {
-        label: <Link className={'sidebar__link'} to={'/order'} children={'Order List'} />,
-        key: '3',
+        label: (
+            <a href="/signup">
+                Sign up
+            </a>
+        ),
+        key: 'signup',
+        icon: <UserAddOutlined />
     },
     {
-        label: <Link className={'sidebar__link'} to={'/'} children={'Create new order'} />,
-        key: '4',
+        type: 'divider'
     },
     {
-        label: <Link className={'sidebar__link'} to={'/user'} children={'User List'} />,
-        key: '5',
+        label: (
+            <a href="/order">
+                Order List
+            </a>
+        ),
+        key: 'order',
+        icon: <OrderedListOutlined />
     },
     {
-        label: <Link className={'sidebar__link'} to={'http://localhost:8000/order/export-csv'} children={'Order List export'} />,
-        key: '6',
+        label: (
+            <a href="/user">
+                User List
+            </a>
+        ),
+        key: 'user',
+        icon: <TeamOutlined />
     },
     {
-        label: <Link className={'sidebar__link'} to={'http://localhost:8000/user/export-csv'} children={'User List export'} />,
-        key: '7',
-    }
+        label: 'Exports',
+        key: 'exports',
+        icon: <DownloadOutlined />,
+        children: [
+            {
+                label: (
+                    <a href="http://localhost:8000/order/export-csv">
+                        Order List export
+                    </a>
+                ),
+                key: 'order/export-csv',
+            },
+            {
+                label: (
+                    <a href="http://localhost:8000/user/export-csv">
+                        User List export
+                    </a>
+                ),
+                key: 'user/export-csv',
+            },
+        ],
+    },
 ];
 
 const Sidebar = () => {
     const [collapsed, setCollapsed] = useState(false);
-    const toggleCollapsed = () => {
-        setCollapsed(!collapsed);
-    };
 
-    return <Dropdown className={'sidebar'} menu={{ items }} trigger={['click']}>
-        <Button className={'sidebar__button'}
-            type="primary"
-            onClick={toggleCollapsed}
+    return (
+        <Sider
+            collapsible
+            collapsed={collapsed}
+            style={{
+                overflow: "auto",
+                height: "100vh",
+                position: "sticky",
+                top: 0,
+                left: 0,
+                zIndex: 1
+            }}
+            onCollapse={(value) => setCollapsed(value)}
         >
-            {collapsed ? <MenuOutlined /> : <MenuOutlined />}
-        </Button>
-    </Dropdown>
+            <div className="logo" />
+            <Menu defaultSelectedKeys={['1']} theme='dark' mode="inline" items={items} />
+        </Sider>
+    )
 };
 export default Sidebar;
