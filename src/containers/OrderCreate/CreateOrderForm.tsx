@@ -94,6 +94,7 @@ const CreateOrderForm = () => {
         >
             <DatePicker
                 showTime
+                format='HH:mm'
                 onChange={handleDateChange}
                 style={{ marginBottom: '16px', width: '100%' }}
                 placeholder="Дата и время"
