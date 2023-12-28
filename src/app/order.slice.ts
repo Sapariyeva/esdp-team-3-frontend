@@ -10,6 +10,8 @@ import {
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { $api } from '@/api/api.ts';
 import { IOrderRequest } from '@/interfaces/IOrderRequest.interface';
+import { getCurrentDate } from '@/helpers/getCurrentDate.helper';
+import { downloadFile } from '@/helpers/downloadFile.helpers';
 
 const initialState: IOrderState = {
 	orderData: {
@@ -104,6 +106,25 @@ export const createOrder = createAsyncThunk(
 		} catch (e) {
 			console.error('Error while creating order:', e);
 			return rejectWithValue('HTTP error createOrder');
+		}
+	}
+);
+
+export const exportOrderListToCSV = createAsyncThunk(
+	'exportOrderListToCSV',
+	async (_, { rejectWithValue }) => {
+		try {
+			const response = await $api.get(`/order/export-csv`,
+				{ responseType: 'blob' }
+			);
+
+			const blobURL = URL.createObjectURL(response.data);
+			const formattedDateTime = getCurrentDate();
+
+			await downloadFile(blobURL, `orders_${formattedDateTime}.csv`);
+			URL.revokeObjectURL(blobURL);
+		} catch (e) {
+			return rejectWithValue('');
 		}
 	}
 );

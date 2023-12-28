@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Button, Drawer, Flex, Input, Space, Typography } from 'antd';
 import { ERole } from '@/enum/role.enum';
 import { ESearchFields, EUserStatus } from '@/enum/user.enum';
-import {  FilterOutlined, SearchOutlined} from '@ant-design/icons';
+import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
 import './SearchBar.scss';
 interface SearchBarProps {
     onSearch: (searchTerm: string, selectedStatus?: EUserStatus, selectedRole?: ERole, selectedSearchField?: ESearchFields) => void;
@@ -50,7 +50,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                     className="searchInput"
                     style={{
                         flex: 1,
-                       
+
                     }}
                 />
                 <Button
@@ -61,23 +61,23 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                         alignSelf: 'stretch',
                         boxSizing: 'border-box',
                         marginLeft: '0',
-                        
+
                     }}
                 />
             </div>
 
 
-            
+
             <Drawer
                 style={{ position: 'fixed' }}
                 title="Настройки фильтра"
                 placement="right"
                 closable={true}
                 onClose={() => setIsFilterDrawerVisible(false)}
-                visible={isFilterDrawerVisible}
+                open={isFilterDrawerVisible}
                 getContainer={false}
-                bodyStyle={{ paddingBottom: 80 }}
-                 
+                styles={{ body: { paddingBottom: 80 } }}
+
             >
                 <Space direction="vertical" size="middle">
                     <Flex
@@ -99,7 +99,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                                         backgroundColor: '#F5F4F2',
                                         border: 'none',
                                         marginRight: '13px',
-                                        marginBottom: '15px', 
+                                        marginBottom: '15px',
                                     }}
                                 >
                                     {statusValue}
@@ -118,8 +118,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                                     style={{
                                         backgroundColor: '#F5F4F2',
                                         border: 'none',
-                                        marginRight: '13px', 
-                                        marginBottom: '15px', 
+                                        marginRight: '13px',
+                                        marginBottom: '15px',
                                     }}
                                 >
                                     {roleValue}
@@ -138,8 +138,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                                     style={{
                                         backgroundColor: '#F5F4F2',
                                         border: 'none',
-                                        marginRight: '13px', 
-                                        marginBottom: '15px', 
+                                        marginRight: '13px',
+                                        marginBottom: '15px',
                                     }}
                                 >
                                     {field}

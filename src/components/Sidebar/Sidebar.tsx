@@ -4,88 +4,93 @@ import type { MenuProps } from 'antd';
 import { Menu } from 'antd';
 import './Sidebar.scss'
 import Sider from 'antd/es/layout/Sider';
+import { useAppDispatch } from '@/app/store';
+import { exportOrderListToCSV } from '@/app/order.slice';
+import { exportUserListToCSV } from '@/app/user.slice';
 
 type MenuItem = Required<MenuProps>['items'][number];
 
-const items: MenuItem[] = [
-    {
-        label: (
-            <a href="/">
-                Home
-            </a>
-        ),
-        key: 'home',
-        icon: <HomeOutlined />
-    },
-    {
-        type: 'divider'
-    },
-    {
-        label: (
-            <a href="/signin">
-                Sign in
-            </a>
-        ),
-        key: 'signin',
-        icon: <UserOutlined />
-    },
-    {
-        label: (
-            <a href="/signup">
-                Sign up
-            </a>
-        ),
-        key: 'signup',
-        icon: <UserAddOutlined />
-    },
-    {
-        type: 'divider'
-    },
-    {
-        label: (
-            <a href="/order">
-                Order List
-            </a>
-        ),
-        key: 'order',
-        icon: <OrderedListOutlined />
-    },
-    {
-        label: (
-            <a href="/user">
-                User List
-            </a>
-        ),
-        key: 'user',
-        icon: <TeamOutlined />
-    },
-    {
-        label: 'Exports',
-        key: 'exports',
-        icon: <DownloadOutlined />,
-        children: [
-            {
-                label: (
-                    <a href="http://localhost:8000/order/export-csv">
-                        Order List export
-                    </a>
-                ),
-                key: 'order/export-csv',
-            },
-            {
-                label: (
-                    <a href="http://localhost:8000/user/export-csv">
-                        User List export
-                    </a>
-                ),
-                key: 'user/export-csv',
-            },
-        ],
-    },
-];
-
 const Sidebar = () => {
     const [collapsed, setCollapsed] = useState(false);
+
+    const dispatch = useAppDispatch();
+
+    const items: MenuItem[] = [
+        {
+            label: (
+                <a href="/">
+                    Home
+                </a>
+            ),
+            key: 'home',
+            icon: <HomeOutlined />
+        },
+        {
+            type: 'divider'
+        },
+        {
+            label: (
+                <a href="/signin">
+                    Sign in
+                </a>
+            ),
+            key: 'signin',
+            icon: <UserOutlined />
+        },
+        {
+            label: (
+                <a href="/signup">
+                    Sign up
+                </a>
+            ),
+            key: 'signup',
+            icon: <UserAddOutlined />
+        },
+        {
+            type: 'divider'
+        },
+        {
+            label: (
+                <a href="/order">
+                    Order List
+                </a>
+            ),
+            key: 'order',
+            icon: <OrderedListOutlined />
+        },
+        {
+            label: (
+                <a href="/user">
+                    User List
+                </a>
+            ),
+            key: 'user',
+            icon: <TeamOutlined />
+        },
+        {
+            label: 'Exports',
+            key: 'exports',
+            icon: <DownloadOutlined />,
+            children: [
+                {
+                    label: (
+                        <span onClick={() => dispatch(exportOrderListToCSV())}>
+                            Order List export
+                        </span>
+                    ),
+                    key: 'order/export-csv',
+                },
+                {
+                    label: (
+                        <span onClick={() => dispatch(exportUserListToCSV())}>
+                            User List export
+                        </span>
+                    ),
+                    key: 'user/export-csv',
+                },
+            ],
+        },
+    ];
 
     return (
         <Sider
@@ -97,7 +102,8 @@ const Sidebar = () => {
                 position: "sticky",
                 top: 0,
                 left: 0,
-                zIndex: 1
+                zIndex: 1,
+                userSelect: 'none',
             }}
             onCollapse={(value) => setCollapsed(value)}
         >
