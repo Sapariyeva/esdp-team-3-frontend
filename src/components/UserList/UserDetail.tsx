@@ -30,30 +30,32 @@ const UserDetail: React.FC = () => {
         return <div>No user data available.</div>;
     }
 
+    const formattedBirthday = new Date(user.birthday!).toLocaleDateString();
+
     return (
         <div style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             height: '100vh',
-            background: 'linear-gradient(to right, #ece9e6, #ffffff)', 
+            background: 'linear-gradient(to right, #ece9e6, #ffffff)',
             padding: '20px'
         }}>
             <Card
                 style={{
                     maxWidth: 300,
                     width: '100%',
-                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)', 
-                    borderRadius: '10px', 
-                    overflow: 'hidden'  
+                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                    borderRadius: '10px',
+                    overflow: 'hidden'
                 }}
                 cover={
                     <div style={{
                         display: 'flex',
                         justifyContent: 'center',
                         padding: '20px',
-                        background: '#f0f2f5',  
-                        borderBottom: '1px solid #f0f0f0' 
+                        background: '#f0f2f5',
+                        borderBottom: '1px solid #f0f0f0'
                     }}>
                         <Avatar
                             size={128}
@@ -72,10 +74,9 @@ const UserDetail: React.FC = () => {
                     title={user.displayName}
                     description={(
                         <>
-                          
                             <p><strong>Телефон:</strong> {user.phone || 'Не указан'}</p>
                             <p><strong>Email:</strong> {user.email || 'Не указан'}</p>
-                            <p><strong>Дата рождения:</strong> {user.birthday || 'Не указана'}</p>
+                            <p><strong>Дата рождения:</strong> {user.birthday ? formattedBirthday : 'Не указана'}</p>
                             <p><strong>Роль:</strong> {user.role}</p>
                             <p><strong>Средний рейтинг:</strong> {user.avgRating || 'Не указан'}</p>
                             <p><strong>Количество оценок:</strong> {user.ratingCount || 'Не указано'}</p>
@@ -87,7 +88,7 @@ const UserDetail: React.FC = () => {
                 />
             </Card>
         </div>
-    ); 
+    );
 };
 
 export default UserDetail;
