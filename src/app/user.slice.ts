@@ -93,12 +93,7 @@ export const signOut = createAsyncThunk(
 		try {
 			const { data } = await $api.post('/user/signOut');
 			if (data.success) {
-				console.log('accessToken before remove: ', localStorage.getItem('token'))
 				localStorage.removeItem('token');
-				console.log('accessToken after remove: ', localStorage.getItem('token'))
-				console.log('refreshToken before remove: ', localStorage.getItem('refreshToken'))
-				localStorage.removeItem('refreshToken');
-				console.log('refreshToken after remove: ', localStorage.getItem('refreshToken'))
 			} else {
 				console.error('Failed to sign out');
 			}
@@ -164,7 +159,6 @@ export const userSlice = createSlice({
 				signIn.fulfilled,
 				(state, action: PayloadAction<IUser | IUser[]>) => {
 					const { payload } = action;
-					console.log('payload: ', payload);
 					if (Array.isArray(payload)) {
 						state.user = payload;
 						state.multiRoleSuccess = true;
