@@ -3,6 +3,7 @@ import { Modal, Input, Radio, Select, Button, DatePicker } from 'antd';
 import { fetchManagers, fetchUserByPhone } from '@/app/user.slice';
 import { RootState, useAppDispatch, useAppSelector } from '@/app/store';
 import { createOrder } from '@/app/order.slice';
+import { useNavigate } from 'react-router-dom';
 
 
 const { Option } = Select;
@@ -11,6 +12,7 @@ const CreateOrderForm = () => {
     const dispatch = useAppDispatch();
     const managers = useAppSelector((state: RootState) => state.user.managers);
     const user = useAppSelector((state: RootState) => state.user.user);
+    const navigate = useNavigate();
 
     const [date, setDate] = useState('');
     const [address, setAddress] = useState('');
@@ -79,11 +81,16 @@ const CreateOrderForm = () => {
         setIsDisplayNameManuallyChanged(true);
     };
 
+    const handleClose = () => {
+        navigate(-1);
+    };
+
     return (
         <Modal
             open={true}
             title="Создать заказ"
             footer={null}
+            onCancel={handleClose}
         >
             <DatePicker
                 showTime

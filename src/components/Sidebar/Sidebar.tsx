@@ -22,7 +22,7 @@ const items: MenuProps['items'] = [
         key: '3',
     },
     {
-        label: <Link className={'sidebar__link'} to={'/createOrderForm'} children={'Create order form'} />,
+        label: <Link className={'sidebar__link'} to={'/'} children={'Create new order'} />,
         key: '4',
     },
     {
