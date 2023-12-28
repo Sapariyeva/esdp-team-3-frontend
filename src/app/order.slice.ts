@@ -24,6 +24,7 @@ const initialState: IOrderState = {
 	},
 	modalFilterOrder: false,
 	modalOrderDetails: false,
+	modalOrderPerformers: false,
 	orderDetails: {
 		details: null,
 	},
@@ -122,6 +123,11 @@ export const orderSlice = createSlice({
 		},
 		setIsModalDetailsClose(state) {
 			state.modalOrderDetails = false;
+			state.modalOrderPerformers = false;
+		},
+		setIsModalOrderPerformers(state) {
+			console.log('state.modalOrderPerformers: ', state.modalOrderPerformers);
+			state.modalOrderPerformers = !state.modalOrderPerformers;
 		},
 	},
 	extraReducers: (builder) => {
@@ -201,4 +207,5 @@ export const {
 	setIsModalFilterClose,
 	setIsModalDetailsOpen,
 	setIsModalDetailsClose,
+	setIsModalOrderPerformers
 } = orderSlice.actions;

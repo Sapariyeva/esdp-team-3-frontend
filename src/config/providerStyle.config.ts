@@ -22,7 +22,7 @@ export const providerStyleConfig = {
 	},
 	button: {
 		style: {
-			height: '54px',
+			maxHeight: '54px',
 			fontWeight: '500',
 			fontSize: '16px',
 		},
