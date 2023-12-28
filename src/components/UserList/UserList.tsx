@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Avatar, Button, List, Pagination } from 'antd';
 import { IUser } from '@/interfaces/user.interface';
-import './UserList.scss';
 import { useAppDispatch, useAppSelector } from '@/app/store';
 import { fetchUsersWithPaginationLink } from '@/app/userList.slice';
 import { Link, useNavigate } from 'react-router-dom';
+import { displayFormatPhone } from '@/helpers/displayFormatPhone.helper';
+import './UserList.scss';
+
 interface UserListProps {
     users: IUser[];
     totalItems: number;
@@ -24,7 +26,7 @@ const UserList: React.FC<UserListProps> = ({
     const navigate = useNavigate();
 
     const goToCreateUser = () => {
-        navigate('/createUserForm'); 
+        navigate('/createUserForm');
     };
 
     const handlePageChange = (pageNumber: number) => {
@@ -40,7 +42,7 @@ const UserList: React.FC<UserListProps> = ({
     };
 
     return (
-        <div style={{ padding: '0 20px' }}> 
+        <div style={{ padding: '0 20px' }}>
             <List
                 itemLayout="horizontal"
                 dataSource={users}
@@ -48,12 +50,12 @@ const UserList: React.FC<UserListProps> = ({
                     <Link to={`/user/${user.id}`} style={{ textDecoration: 'none' }}>
                         <List.Item
                             style={{
-                                padding: '10px', 
-                                cursor: 'pointer', 
+                                padding: '10px',
+                                cursor: 'pointer',
                                 borderRadius: '5px',
-                                transition: 'all 0.3s ease', 
-                                display: 'block', 
-                                backgroundColor:'#ffffff'
+                                transition: 'all 0.3s ease',
+                                display: 'block',
+                                backgroundColor: '#ffffff'
                             }}
                             onMouseEnter={e => {
                                 e.currentTarget.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
@@ -81,7 +83,7 @@ const UserList: React.FC<UserListProps> = ({
                                     />
                                 }
                                 title={user.displayName}
-                                description={user.phone || 'N/A'}
+                                description={user.phone ? displayFormatPhone(user.phone) : 'N/A'}
                             />
                         </List.Item>
                     </Link>
@@ -93,7 +95,7 @@ const UserList: React.FC<UserListProps> = ({
                 total={totalItems}
                 onChange={handlePageChange}
                 style={{
-                    marginTop: '20px', 
+                    marginTop: '20px',
                 }}
             />
             <div style={{ padding: '0 20px' }}>

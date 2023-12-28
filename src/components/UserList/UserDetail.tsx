@@ -4,6 +4,7 @@ import { useAppDispatch, useAppSelector } from '@/app/store';
 import { fetchUserById } from '@/app/userList.slice';
 import { Avatar, Button, Card, Tag } from 'antd';
 import { UserOutlined } from '@ant-design/icons';
+import { displayFormatPhone } from '@/helpers/displayFormatPhone.helper';
 
 const UserDetail: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -74,7 +75,7 @@ const UserDetail: React.FC = () => {
                     title={user.displayName}
                     description={(
                         <>
-                            <p><strong>Телефон:</strong> {user.phone || 'Не указан'}</p>
+                            <p><strong>Телефон:</strong> {user.phone ? displayFormatPhone(user.phone) : 'Не указан'}</p>
                             <p><strong>Email:</strong> {user.email || 'Не указан'}</p>
                             <p><strong>Дата рождения:</strong> {user.birthday ? formattedBirthday : 'Не указана'}</p>
                             <p><strong>Роль:</strong> {user.role}</p>
