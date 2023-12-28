@@ -20,14 +20,17 @@ export const OrderDetails = () => {
 
 			<Flex gap='middle' vertical style={ordersContainerFlexWrapStyle}>
 				<Typography.Title level={4}>Информация о заказе</Typography.Title>
-				<Row>
-					<Col>
-						<Typography.Title level={4}>Куда:&nbsp;</Typography.Title>
-					</Col>
-					<Col>
-						<Typography.Title level={4}>{orderDetails.details!.address}</Typography.Title>
-					</Col>
-				</Row>
+				{orderDetails.details && orderDetails.details.address ?
+					<Row>
+						<Col>
+							<Typography.Title level={4}>Куда:&nbsp;</Typography.Title>
+						</Col>
+						<Col>
+							<Typography.Title level={4}>{ }</Typography.Title>
+						</Col>
+					</Row>
+					: ''
+				}
 				<Button
 					style={orderDetailsButton}
 					type={'primary'}
