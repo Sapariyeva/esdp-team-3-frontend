@@ -1,5 +1,6 @@
 import { EOrderStatus } from '@/enum/order.enum.ts';
 import { IUser } from '@/interfaces/user.interface.ts';
+import { IPerformerOrder } from './performerOrder.interface';
 
 export interface IOrderState {
 	orderData: IOrderList;
@@ -9,6 +10,7 @@ export interface IOrderState {
 	orderDetails: {
 		details: IOrder | null;
 	};
+	modalOrderPerformers: boolean;
 }
 export interface IOrderList {
 	orders: IOrder[];
@@ -25,6 +27,7 @@ export interface IOrder {
 	address: string;
 	description?: string;
 	performersQuantity: number;
+	performerOrders: IPerformerOrder[];
 	timeWorked?: number;
 	income?: number;
 	performerPayment?: number;

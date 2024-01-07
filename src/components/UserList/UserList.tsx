@@ -1,10 +1,12 @@
 import React, { useCallback, useRef} from 'react';
 import { Avatar, Button, List, Tag } from 'antd';
 import { IUser } from '@/interfaces/user.interface';
+
 import './UserList.scss';
 import { Link, useNavigate } from 'react-router-dom';
 import translateValue, { roleDictionary, statusDictionary } from '@/helpers/translate.helper';
 import { ERole } from '@/enum/role.enum';
+
 interface UserListProps {
     users: IUser[];
     totalItems: number;
@@ -64,6 +66,7 @@ const UserList: React.FC<UserListProps> = ({
         return 'N/A'; 
     };
     return (
+
         <div className="UserList" style={{ padding: '0 20px' }}>
             <List
                 itemLayout="horizontal"
@@ -145,6 +148,7 @@ const UserList: React.FC<UserListProps> = ({
                             </List.Item>
                         </Link>
                     );
+
                 }}
             />
             <div style={{ padding: '0 20px' }}>

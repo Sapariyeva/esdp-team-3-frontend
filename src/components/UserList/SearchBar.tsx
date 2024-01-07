@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { Button, Flex, Input, Modal, Space, Typography } from 'antd';
 import { ERole } from '@/enum/role.enum';
 import { ESearchFields, EUserStatus } from '@/enum/user.enum';
+
 import { FilterTwoTone} from '@ant-design/icons';
+
 import './SearchBar.scss';
 import translateValue, { roleDictionary, searchFieldsDictionary, statusDictionary } from '@/helpers/translate.helper';
 interface SearchBarProps {
@@ -75,6 +77,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                     icon={<FilterTwoTone />} 
                     onClick={() => setIsFilterModalVisible(true)}
                     className="filterButton"
+
                 />
             </div>
 
@@ -86,6 +89,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                 width="100%"
                 className="modalCustomStyle"
                 footer={[]}
+
             >
                 <Space className='123' direction="vertical" size="middle" style={{ padding: '0px' }}>
                     <Flex
@@ -105,6 +109,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                                     onClick={() => toggleStatus(statusValue)}
                                     size="small" 
                                     style={{
+
                                         width: '45%', 
                                         height: '29px', 
                                         borderColor: '#006698', 
@@ -114,6 +119,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                                         justifyContent: 'center', 
                                         padding: 0, 
                                         maxWidth:'152px'
+
                                     }}
                                 >
                                     {translateValue(statusValue, statusDictionary)}
@@ -131,6 +137,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                                     onClick={() => toggleRole(roleValue)}
                                     size="small"
                                     style={{
+
                                         width: '45%',
                                         height: '29px',
                                         borderColor: '#006698',
@@ -140,6 +147,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                                         justifyContent: 'center',
                                         padding: 0,
                                         maxWidth: '152px'
+
                                     }}
                                 >
                                     
@@ -158,6 +166,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                                     onClick={() => toggleSearchField(field)}
                                     size="small"
                                     style={{
+
                                         width: '45%',
                                         height: '29px',
                                         borderColor: '#006698',
@@ -167,6 +176,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                                         justifyContent: 'center',
                                         padding: 0,
                                         maxWidth: '152px'
+
                                     }}
                                 >
                                     

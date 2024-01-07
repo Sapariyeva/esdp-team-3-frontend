@@ -3,7 +3,9 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/app/store';
 import { fetchUserById } from '@/app/userList.slice';
 import { Avatar, Button, Card, Tag } from 'antd';
+
 import { CloseOutlined, UserOutlined } from '@ant-design/icons';
+
 
 const UserDetail: React.FC = () => {
     const dispatch = useAppDispatch();
@@ -31,12 +33,15 @@ const UserDetail: React.FC = () => {
         return <div>No user data available.</div>;
     }
 
+    const formattedBirthday = new Date(user.birthday!).toLocaleDateString();
+
     return (
         <div style={{
             display: 'flex',
             justifyContent: 'center',
             alignItems: 'center',
             height: '100vh',
+
             overflow: 'auto',
             position: 'relative'
         }}>
@@ -49,6 +54,7 @@ const UserDetail: React.FC = () => {
                 }}
                 cover={
                     <div style={{ padding: '20px', background: '#f0f2f5', borderBottom: '1px solid #f0f0f0' }}>
+
                         <Avatar
                             size={128}
                             src={user.avatar}
@@ -66,10 +72,9 @@ const UserDetail: React.FC = () => {
                     title={user.displayName}
                     description={(
                         <>
-                          
-                            <p><strong>Телефон:</strong> {user.phone || 'Не указан'}</p>
+                            <p><strong>Телефон:</strong> {user.phone ? displayFormatPhone(user.phone) : 'Не указан'}</p>
                             <p><strong>Email:</strong> {user.email || 'Не указан'}</p>
-                            <p><strong>Дата рождения:</strong> {user.birthday || 'Не указана'}</p>
+                            <p><strong>Дата рождения:</strong> {user.birthday ? formattedBirthday : 'Не указана'}</p>
                             <p><strong>Роль:</strong> {user.role}</p>
                             <p><strong>Средний рейтинг:</strong> {user.avgRating || 'Не указан'}</p>
                             <p><strong>Количество оценок:</strong> {user.ratingCount || 'Не указано'}</p>

@@ -1,0 +1,38 @@
+.performerOrderTitle {
+    display: flex;
+    flex-direction: column;
+}
+
+.performerOrderBtnGroup {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.modalPerformerOrderListAcceptBtn,
+.modalPerformerOrderListDeclineBtn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+}
+
+.modalPerformerOrderListAcceptBtn {
+    background-color: #00FF1A;
+    transition: 'background-color 0.3s';
+    margin-right: 10px;
+}
+
+.modalPerformerOrderListAcceptBtn.css-dev-only-do-not-override-z1cjmh.ant-btn-default:not(:disabled):not(.ant-btn-disabled):hover {
+    border-color: #00FF1A;
+}
+
+.modalPerformerOrderListDeclineBtn {
+    background-color: #FF4D4F;
+    transition: 'background-color 0.3s';
+}
+
+.modalPerformerOrderListDeclineBtn.css-dev-only-do-not-override-z1cjmh.ant-btn-default:not(:disabled):not(.ant-btn-disabled):hover {
+    border-color: #FF4D4F;
+}

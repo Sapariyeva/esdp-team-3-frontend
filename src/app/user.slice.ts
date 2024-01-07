@@ -9,6 +9,8 @@ import {
 import { ERole } from '@/enum/role.enum.ts';
 import { EUserStatus } from '@/enum/user.enum.ts';
 import { $api } from '@/api/api.ts';
+import { getCurrentDate } from '@/helpers/getCurrentDate.helper';
+import { downloadFile } from '@/helpers/downloadFile.helpers';
 
 const initialState: IUserState = {
 	user: {
@@ -89,13 +91,14 @@ export const signInConfirmRole = createAsyncThunk(
 
 export const signOut = createAsyncThunk(
 	'signOut',
-	async (token: string, { rejectWithValue }) => {
+	async (_, { rejectWithValue }) => {
 		try {
-			await $api.post('/user/signOut', null, {
-				headers: {
-					Authorization: `Bearer ${token}`,
-				},
-			});
+			const { data } = await $api.post('/user/signOut');
+			if (data.success) {
+				localStorage.removeItem('token');
+			} else {
+				console.error('Failed to sign out');
+			}
 		} catch (e) {
 			return rejectWithValue('HTTP error signOut');
 		}
@@ -124,6 +127,25 @@ export const fetchUserByPhone = createAsyncThunk(
 		} catch (error) {
 			console.error('Ошибка при получении данных пользователя:', error);
 			return rejectWithValue('HTTP error fetchUserByPhone');
+		}
+	}
+);
+
+export const exportUserListToCSV = createAsyncThunk(
+	'exportUserListToCSV',
+	async (_, { rejectWithValue }) => {
+		try {
+			const response = await $api.get(`/user/export-csv`,
+				{ responseType: 'blob' }
+			);
+
+			const blobURL = URL.createObjectURL(response.data);
+			const formattedDateTime = getCurrentDate();
+
+			await downloadFile(blobURL, `users_${formattedDateTime}.csv`);
+			URL.revokeObjectURL(blobURL);
+		} catch (e) {
+			return rejectWithValue('');
 		}
 	}
 );
