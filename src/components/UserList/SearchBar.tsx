@@ -1,85 +1,97 @@
 import React, { useState } from 'react';
-import { Button, Drawer, Flex, Input, Space, Typography } from 'antd';
+import { Button, Flex, Input, Modal, Space, Typography } from 'antd';
 import { ERole } from '@/enum/role.enum';
 import { ESearchFields, EUserStatus } from '@/enum/user.enum';
-import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
+
+import { FilterTwoTone} from '@ant-design/icons';
+
 import './SearchBar.scss';
+import translateValue, { roleDictionary, searchFieldsDictionary, statusDictionary } from '@/helpers/translate.helper';
 interface SearchBarProps {
-    onSearch: (searchTerm: string, selectedStatus?: EUserStatus, selectedRole?: ERole, selectedSearchField?: ESearchFields) => void;
+    onSearch: (
+        searchTerm: string,
+        selectedStatus?: EUserStatus | null, 
+        selectedRole?: ERole | null, 
+        selectedSearchField?: ESearchFields | null 
+    ) => void;
 }
 const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
-    const [isFilterDrawerVisible, setIsFilterDrawerVisible] = useState(false);
+    const [isFilterModalVisible, setIsFilterModalVisible] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStatus, setSelectedStatus] = useState<EUserStatus | null>(null);
     const [selectedRole, setSelectedRole] = useState<ERole | null>(null);
     const [selectedSearchField, setSelectedSearchField] = useState<ESearchFields | null>(null);
-
+    const [isSelectFieldModalVisible, setIsSelectFieldModalVisible] = useState(false);
+    const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
     const toggleStatus = (status: EUserStatus) => {
-        setSelectedStatus(prevStatus => prevStatus === status ? null : status);
-        console.log(`status`, status);
+        const newStatus = selectedStatus === status ? null : status;
+        setSelectedStatus(newStatus);
+        onSearch(searchTerm, newStatus, selectedRole, selectedSearchField);
     };
 
     const toggleRole = (role: ERole) => {
-        setSelectedRole(prevRole => prevRole === role ? null : role);
-        console.log(`role`, role);
+        const newRole = selectedRole === role ? null : role;
+        setSelectedRole(newRole);
+        onSearch(searchTerm, selectedStatus, newRole, selectedSearchField);
     };
 
     const toggleSearchField = (field: ESearchFields) => {
-        setSelectedSearchField(prevField => prevField === field ? null : field);
-        console.log(`field`, field);
+        const newField = selectedSearchField === field ? null : field;
+        setSelectedSearchField(newField);
+        if (searchTerm) {
+            onSearch(searchTerm, selectedStatus, selectedRole, newField);
+        }
     };
 
     const handleSearch = (value: string) => {
         setSearchTerm(value);
-        onSearch(value, selectedStatus ?? undefined, selectedRole ?? undefined, selectedSearchField ?? undefined);
+        if (debounceTimer) clearTimeout(debounceTimer);
+
+        const newTimer = setTimeout(() => {
+            if (selectedSearchField) {
+                onSearch(value, selectedStatus, selectedRole, selectedSearchField);
+            } else {
+                setIsSelectFieldModalVisible(true);
+            }
+        }, 500); 
+
+        setDebounceTimer(newTimer);
     };
 
     const handleApplyFilters = () => {
-        onSearch(searchTerm, selectedStatus ?? undefined, selectedRole ?? undefined, selectedSearchField ?? undefined);
-        setIsFilterDrawerVisible(false);
+        onSearch(searchTerm, selectedStatus, selectedRole, selectedSearchField);
+        setIsFilterModalVisible(false);
     };
+    
 
 
     return (
         <>
-            <div className="searchBarContainer" style={{ display: 'flex', alignItems: 'stretch' }}>
-                <Input.Search
-                    placeholder="Enter search term..."
-                    onSearch={handleSearch}
-                    enterButton={<SearchOutlined />}
+            <div className="searchBarContainer">
+                <Input
+                    placeholder="Введите текст для поиска..."
+                    onChange={(e) => handleSearch(e.target.value)}
                     className="searchInput"
-                    style={{
-                        flex: 1,
-
-                    }}
                 />
                 <Button
-                    icon={<FilterOutlined />}
-                    onClick={() => setIsFilterDrawerVisible(true)}
+                    icon={<FilterTwoTone />} 
+                    onClick={() => setIsFilterModalVisible(true)}
                     className="filterButton"
-                    style={{
-                        alignSelf: 'stretch',
-                        boxSizing: 'border-box',
-                        marginLeft: '0',
 
-                    }}
                 />
             </div>
 
-
-
-            <Drawer
-                style={{ position: 'fixed' }}
+            <Modal
                 title="Настройки фильтра"
-                placement="right"
-                closable={true}
-                onClose={() => setIsFilterDrawerVisible(false)}
-                open={isFilterDrawerVisible}
-                getContainer={false}
-                styles={{ body: { paddingBottom: 80 } }}
+                visible={isFilterModalVisible}
+                onOk={handleApplyFilters}
+                onCancel={() => setIsFilterModalVisible(false)}
+                width="100%"
+                className="modalCustomStyle"
+                footer={[]}
 
             >
-                <Space direction="vertical" size="middle">
+                <Space className='123' direction="vertical" size="middle" style={{ padding: '0px' }}>
                     <Flex
                         vertical
                         justify="flex-start"
@@ -89,68 +101,119 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                     >
                         {/* Фильтр по статусу */}
                         <Typography.Title level={5} style={{ marginBottom: '10px' }}>Статус</Typography.Title>
-                        <Flex style={{ width: '100%', flexWrap: 'wrap' }}>
+                        <Flex style={{ width: '100%', flexWrap: 'wrap', gap: '13px' }}>
                             {Object.values(EUserStatus).map((statusValue) => (
                                 <Button
                                     key={statusValue}
                                     type={selectedStatus === statusValue ? 'primary' : 'default'}
                                     onClick={() => toggleStatus(statusValue)}
+                                    size="small" 
                                     style={{
-                                        backgroundColor: '#F5F4F2',
-                                        border: 'none',
-                                        marginRight: '13px',
-                                        marginBottom: '15px',
+
+                                        width: '45%', 
+                                        height: '29px', 
+                                        borderColor: '#006698', 
+                                        fontSize: '14px', 
+                                        display: 'flex', 
+                                        alignItems: 'center', 
+                                        justifyContent: 'center', 
+                                        padding: 0, 
+                                        maxWidth:'152px'
+
                                     }}
                                 >
-                                    {statusValue}
+                                    {translateValue(statusValue, statusDictionary)}
                                 </Button>
                             ))}
                         </Flex>
 
                         {/* Фильтр по роли */}
                         <Typography.Title level={5} style={{ marginBottom: '10px' }}>Роли</Typography.Title>
-                        <Flex style={{ width: '100%', flexWrap: 'wrap' }}>
+                        <Flex style={{ width: '100%', flexWrap: 'wrap', gap: '13px' }}>
                             {Object.values(ERole).map((roleValue) => (
                                 <Button
                                     key={roleValue}
                                     type={selectedRole === roleValue ? 'primary' : 'default'}
                                     onClick={() => toggleRole(roleValue)}
+                                    size="small"
                                     style={{
-                                        backgroundColor: '#F5F4F2',
-                                        border: 'none',
-                                        marginRight: '13px',
-                                        marginBottom: '15px',
+
+                                        width: '45%',
+                                        height: '29px',
+                                        borderColor: '#006698',
+                                        fontSize: '14px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        padding: 0,
+                                        maxWidth: '152px'
+
                                     }}
                                 >
-                                    {roleValue}
+                                    
+                                    {translateValue(roleValue, roleDictionary)}
                                 </Button>
                             ))}
                         </Flex>
 
                         {/* Фильтр по полю поиска */}
                         <Typography.Title level={5} style={{ marginBottom: '10px' }}>Поиск по</Typography.Title>
-                        <Flex style={{ width: '100%', flexWrap: 'wrap' }}>
+                        <Flex style={{ width: '100%', flexWrap: 'wrap', gap: '13px' }}>
                             {Object.values(ESearchFields).map((field) => (
                                 <Button
                                     key={field}
                                     type={selectedSearchField === field ? 'primary' : 'default'}
                                     onClick={() => toggleSearchField(field)}
+                                    size="small"
                                     style={{
-                                        backgroundColor: '#F5F4F2',
-                                        border: 'none',
-                                        marginRight: '13px',
-                                        marginBottom: '15px',
+
+                                        width: '45%',
+                                        height: '29px',
+                                        borderColor: '#006698',
+                                        fontSize: '14px',
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        justifyContent: 'center',
+                                        padding: 0,
+                                        maxWidth: '152px'
+
                                     }}
                                 >
-                                    {field}
+                                    
+                                    {translateValue(field, searchFieldsDictionary)}
                                 </Button>
                             ))}
                         </Flex>
                     </Flex>
                 </Space>
-            </Drawer>
+            </Modal>
+            <Modal
+                title="Выбор поля для поиска"
+                visible={isSelectFieldModalVisible}
+                onCancel={() => setIsSelectFieldModalVisible(false)}
+                footer={null} 
+                className="selectFieldModalStyle" 
+            >
+                <Space direction="vertical">
+                    <p>Пожалуйста, выберите поле, по которому хотите выполнить поиск.</p>
+                    {Object.values(ESearchFields).map((field) => (
+                        <Button
+                            key={field}
+                            type={selectedSearchField === field ? 'primary' : 'default'}
+                            onClick={() => {
+                                toggleSearchField(field);
+                                setIsSelectFieldModalVisible(false);
+                            }}
+                            className={selectedSearchField === field ? 'selectedFieldButton' : ''}
+                        >
+                            {field}
+                        </Button>
+                    ))}
+                </Space>
+            </Modal>
         </>
     );
 };
+
 
 export default SearchBar;

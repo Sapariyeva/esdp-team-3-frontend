@@ -49,6 +49,8 @@ export const signUp = createAsyncThunk(
 	}
 );
 
+
+
 export const signIn = createAsyncThunk(
 	'signIn',
 	async (user: IUserSignInRequest, { rejectWithValue }) => {
@@ -214,5 +216,6 @@ export const userSlice = createSlice({
 				}
 			})
 			.addCase(fetchUserByPhone.rejected, () => { });
+            
 	},
 });
