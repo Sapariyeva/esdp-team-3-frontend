@@ -1,12 +1,13 @@
 import React, { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '@/app/store';
 import { fetchUserById } from '@/app/userList.slice';
 import { Avatar, Button, Card, Tag } from 'antd';
-import { UserOutlined } from '@ant-design/icons';
+import { CloseOutlined, UserOutlined } from '@ant-design/icons';
 
 const UserDetail: React.FC = () => {
     const dispatch = useAppDispatch();
+    const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
     const user = useAppSelector((state) => state.users.currentUser);
     const isLoading = useAppSelector((state) => state.users.loading);
@@ -36,25 +37,18 @@ const UserDetail: React.FC = () => {
             justifyContent: 'center',
             alignItems: 'center',
             height: '100vh',
-            background: 'linear-gradient(to right, #ece9e6, #ffffff)', 
-            padding: '20px'
+            overflow: 'auto',
+            position: 'relative'
         }}>
             <Card
                 style={{
-                    maxWidth: 300,
-                    width: '100%',
-                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)', 
-                    borderRadius: '10px', 
-                    overflow: 'hidden'  
+                    boxShadow: '0 4px 8px 0 rgba(0,0,0,0.2)',
+                    position: 'relative', 
+                    width: '90%', 
+                    maxWidth: '600px', 
                 }}
                 cover={
-                    <div style={{
-                        display: 'flex',
-                        justifyContent: 'center',
-                        padding: '20px',
-                        background: '#f0f2f5',  
-                        borderBottom: '1px solid #f0f0f0' 
-                    }}>
+                    <div style={{ padding: '20px', background: '#f0f2f5', borderBottom: '1px solid #f0f0f0' }}>
                         <Avatar
                             size={128}
                             src={user.avatar}
@@ -86,8 +80,23 @@ const UserDetail: React.FC = () => {
                     )}
                 />
             </Card>
+
+            {/* Кнопка закрытия в верхнем правом углу */}
+            <Button
+                onClick={() => navigate(-1)}
+                icon={<CloseOutlined />}
+                style={{
+                    position: 'absolute',
+                    top: 16,
+                    right: 16,
+                    border: 'none',
+                    background: 'transparent', 
+                    color: 'rgba(0, 0, 0, 0.65)', 
+                    boxShadow: 'none', 
+                }}
+            />
         </div>
-    ); 
+    );
 };
 
 export default UserDetail;

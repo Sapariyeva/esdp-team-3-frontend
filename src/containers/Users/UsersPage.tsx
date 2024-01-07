@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { fetchUsers } from '@/app/userList.slice';
+import { fetchUsers, setFilterApplied } from '@/app/userList.slice';
 import SearchBar from '@/components/UserList/SearchBar';
 import { useAppDispatch, useAppSelector } from '@/app/store';
 import UserList from '@/components/UserList/UserList';
@@ -20,65 +20,48 @@ const UsersPageContainer = () => {
     const dispatch = useAppDispatch();
 
     const { userList, totalItems } = useAppSelector((state) => state.users);
-    const [currentPage, setCurrentPage] = useState(1);
+  
     const [filters, setFilters] = useState<Filters>({
         offset: 0,
         limit: 10,
         status: undefined,
-        role: undefined,
+        role: undefined, 
+        searchField:undefined
     });
-
-
-
     const fetchUsersWithUrl = (url: any) => {
+        console.log(`url`, url);
+        setFilters(url)
         dispatch(fetchUsers(url));
 
     };
     useEffect(() => {
+        console.log('useEffect filters:', filters);
         const requestFilters = Object.entries(filters).reduce((acc, [key, value]) => {
             if (value !== undefined) acc[key] = value;
             return acc;
         }, {} as Filters);
-        console.log(`filters`, filters);
-console.log(`requestFilters`, requestFilters);
+
+        dispatch(setFilterApplied(true));
         dispatch(fetchUsers(requestFilters));
+    }, []);
 
-    }, [dispatch, filters, currentPage]);
-
-
-
-
-
-    const handleSearch = (searchTerm: string, status?: EUserStatus, role?: ERole, selectedSearchField?: ESearchFields) => {
+    const handleSearch = (
+        searchTerm: string,
+        status?: EUserStatus | null, 
+        role?: ERole | null, 
+        searchField?: ESearchFields | null 
+    ) => {
         const newFilters: Filters = {
-            ...filters,
-            offset: 0, 
+            offset: 0,
+            limit: 10,
+            ...(searchField && searchTerm ? { [searchField]: searchTerm } : {}),
+            ...(status ? { status: status } : {}),
+            ...(role ? { role: role } : {}),
         };
 
-      
-        delete newFilters.displayName;
-        delete newFilters.email;
-        delete newFilters.phone;
-        delete newFilters.identifyingNumber;
-
-        
-        if (searchTerm && selectedSearchField) {
-            newFilters[selectedSearchField] = searchTerm;
-        }
-
-        if (role) {
-            newFilters.role = role;
-        } else {
-            delete newFilters.role;
-        }
-
-        if (status) {
-            newFilters.status = status;
-        } else {
-            delete newFilters.status;
-        }
-
         setFilters(newFilters);
+        dispatch(setFilterApplied(true));
+        dispatch(fetchUsers(newFilters));
     };
 
 
@@ -88,9 +71,10 @@ console.log(`requestFilters`, requestFilters);
             <UserList
                 users={userList}
                 totalItems={totalItems}
-                currentPage={currentPage}
+
                 pageSize={filters.limit}
                 fetchUsers={fetchUsersWithUrl}
+                currentFilters={filters}
             />
         </div>
     );
