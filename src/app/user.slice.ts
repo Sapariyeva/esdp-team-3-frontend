@@ -30,8 +30,11 @@ const initialState: IUserState = {
 		accessToken: '',
 		refreshToken: '',
 	},
-	multiRoleSuccess: false,
-	managers: []
+	managers: [],
+	status: {
+		success: false,
+		message: '',
+	},
 };
 
 export const signUp = createAsyncThunk(
@@ -44,7 +47,7 @@ export const signUp = createAsyncThunk(
 			const { data } = await $api.post('/user/signUp', request);
 			return data.success;
 		} catch (e) {
-			return rejectWithValue('HTTP error post request');
+			return rejectWithValue(e);
 		}
 	}
 );
@@ -68,8 +71,7 @@ export const signIn = createAsyncThunk(
 				return Object.values(data.payload);
 			}
 		} catch (e) {
-			console.log(e);
-			return rejectWithValue('HTTP error signIn');
+			return rejectWithValue(e);
 		}
 	}
 );
@@ -156,36 +158,37 @@ export const userSlice = createSlice({
 	reducers: {},
 	extraReducers: (builder) => {
 		builder
-			.addCase(signIn.pending, () => { })
+			.addCase(signIn.pending, () => {})
 			.addCase(
 				signIn.fulfilled,
 				(state, action: PayloadAction<IUser | IUser[]>) => {
 					const { payload } = action;
 					if (Array.isArray(payload)) {
 						state.user = payload;
-						state.multiRoleSuccess = true;
 					} else {
 						state.user = payload;
+						state.status.success = false;
 					}
 				}
 			)
-			.addCase(signIn.rejected, () => { })
+			.addCase(signIn.rejected, () => {})
 
-			.addCase(signUp.pending, () => { })
-			.addCase(signUp.fulfilled, () => { })
-			.addCase(signUp.rejected, () => { })
+			.addCase(signUp.pending, () => {})
+			.addCase(signUp.fulfilled, () => {})
+			.addCase(signUp.rejected, () => {})
 
-			.addCase(signInConfirmRole.pending, () => { })
+			.addCase(signInConfirmRole.pending, () => {})
 			.addCase(
 				signInConfirmRole.fulfilled,
 				(state, action: PayloadAction<IUser | IUser[]>) => {
 					const { payload } = action;
 					state.user = payload;
+					state.status.success = false;
 				}
 			)
-			.addCase(signInConfirmRole.rejected, () => { })
+			.addCase(signInConfirmRole.rejected, () => {})
 
-			.addCase(signOut.pending, () => { })
+			.addCase(signOut.pending, () => {})
 			.addCase(signOut.fulfilled, (state) => {
 				state.user = {
 					id: 0,
@@ -203,12 +206,12 @@ export const userSlice = createSlice({
 					status: EUserStatus.ACTIVE,
 				};
 			})
-			.addCase(signOut.rejected, () => { })
+			.addCase(signOut.rejected, () => {})
 
 			.addCase(fetchManagers.fulfilled, (state, action) => {
 				state.managers = action.payload;
 			})
-			.addCase(fetchManagers.rejected, () => { })
+			.addCase(fetchManagers.rejected, () => {})
 
 			.addCase(fetchUserByPhone.fulfilled, (state, action) => {
 				if (action.payload.users && action.payload.users.length > 0) {
@@ -216,6 +219,5 @@ export const userSlice = createSlice({
 				}
 			})
 			.addCase(fetchUserByPhone.rejected, () => { });
-            
 	},
 });

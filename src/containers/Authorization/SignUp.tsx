@@ -4,6 +4,7 @@ import {
 	Flex,
 	Form,
 	Input,
+	message,
 	Radio,
 	Space,
 	Typography,
@@ -11,6 +12,7 @@ import {
 import { ERole } from '@/enum/role.enum.ts';
 import { ChangeEvent, useState } from 'react';
 import {
+	IAxiosErrorPayload,
 	IUserSignUpRequest,
 	IUserStateForm,
 } from '@/interfaces/user.interface.ts';
@@ -19,11 +21,13 @@ import { EUserSubject } from '@/enum/user.enum.ts';
 import './authorization.scss';
 import { formatPhoneNumber } from '@/helpers/input.helper.tsx';
 import { signIn, signUp } from '@/app/user.slice.ts';
+import { useNavigate } from 'react-router-dom';
 
 export const SignUp = () => {
 	const dispatch = useAppDispatch();
 	const [form] = Form.useForm<IUserStateForm>();
-
+	const [messageApi, contextHolder] = message.useMessage();
+	const navigate = useNavigate();
 	const [stateValueForm, setStateValueForm] = useState<IUserStateForm>({
 		firstName: '',
 		lastName: '',
@@ -40,7 +44,6 @@ export const SignUp = () => {
 		form.setFieldsValue({ phone: mask });
 	};
 	const onChangeRoleRadioGroup = ({ role }: { role: ERole }) => {
-		form.resetFields();
 		if (role === ERole.customer) {
 			setStateValueForm({
 				...stateValueForm,
@@ -79,42 +82,49 @@ export const SignUp = () => {
 		});
 	};
 	const onFinish = async (values: IUserStateForm) => {
-		const dateString = values.birthday!.toString();
-		const dateObject = new Date(dateString);
-
-		const day = dateObject.getDate().toString().padStart(2, '0');
-		const month = (dateObject.getMonth() + 1).toString().padStart(2, '0'); // Месяцы начинаются с 0
-		const year = dateObject.getFullYear();
-		const formattedDate = `${day}/${month}/${year}`;
 		setStateValueForm({
-			...stateValueForm,
 			...values,
-			birthday: formattedDate,
 			phone: values.phone.replace(/[\s()+_-]/g, '').substring(1),
 		});
 		const user: IUserSignUpRequest = {
 			phone: values.phone.replace(/[\s()+_-]/g, '').substring(1),
 			displayName: `${values.firstName} ${values.lastName}`,
 			password: values.password,
-			birthday: formattedDate,
 			role: values.role,
 			subject: null,
 			identifyingNumber: null,
+			...(values.birthday && { birthday: `${values.birthday}` }),
 		};
-		const success = await dispatch(signUp(user));
-		if (success) {
+		const data = await dispatch(signUp(user));
+		const response = data.payload as IAxiosErrorPayload;
+		if (!response || typeof response !== 'object') {
 			await dispatch(
 				signIn({
-					phone: values.phone,
+					phone: values.phone.replace(/[\s()+_-]/g, '').substring(1),
 					password: values.password,
 					role: ERole.customer,
 				})
 			);
+			navigate('/');
+		} else {
+			warning(response.response?.data.message || 'Ошибка');
 		}
+	};
+	const warning = (text: string) => {
+		messageApi.open({
+			type: 'error',
+			content: text,
+		});
 	};
 	return (
 		<>
-			<Space className={'space'} direction="vertical" size="middle" style={{ display: "flex" }}>
+			{contextHolder}
+			<Space
+				className={'space'}
+				direction="vertical"
+				size="middle"
+				style={{ display: 'flex' }}
+			>
 				<Flex vertical justify={'center'} align={'center'}>
 					<Typography.Title level={2}>Регистрация</Typography.Title>
 					<Form
@@ -122,7 +132,7 @@ export const SignUp = () => {
 						initialValues={{
 							firstName: '',
 							lastName: '',
-							phone: '',
+							phone: '+7 (',
 							birthday: null,
 							password: '',
 							passwordConfirm: '',
@@ -156,7 +166,7 @@ export const SignUp = () => {
 									required: true,
 									message: 'Пожалуйста, введите свое Имя!',
 									validator: (_, value) => {
-										if (value && value.trim().length >= 2) {
+										if (value && value.trim().length >= 3) {
 											return Promise.resolve();
 										} else {
 											return Promise.reject();
@@ -177,7 +187,7 @@ export const SignUp = () => {
 									message:
 										'Пожалуйста, введите свою Фамилию!',
 									validator: (_, value) => {
-										if (value && value.trim().length >= 2) {
+										if (value && value.trim().length >= 3) {
 											return Promise.resolve();
 										} else {
 											return Promise.reject();
@@ -192,6 +202,7 @@ export const SignUp = () => {
 						</Form.Item>
 
 						<Form.Item
+							validateTrigger={['onBlur']}
 							name="phone"
 							rules={[
 								{
@@ -200,10 +211,9 @@ export const SignUp = () => {
 										'Пожалуйста, введите свой номер телефона!',
 									validator: (_, value) => {
 										if (
-											value &&
 											value
-												.replace(/[\s()+_]/g, '')
-												.substring(1).length >= 10
+												.replace(/[\s()+_-]/g, '')
+												.substring(1).length == 10
 										) {
 											return Promise.resolve();
 										} else {
@@ -232,7 +242,7 @@ export const SignUp = () => {
 												if (
 													value &&
 													value.format('DD/MM/YYYY')
-														.length >= 10
+														.length == 10
 												) {
 													return Promise.resolve();
 												} else {
@@ -269,7 +279,7 @@ export const SignUp = () => {
 									</Radio.Group>
 								</Form.Item>
 								{stateValueForm.subject ===
-									EUserSubject.LEGAL ? (
+								EUserSubject.LEGAL ? (
 									<>
 										<Form.Item
 											name="identifyingNumber"
@@ -282,7 +292,7 @@ export const SignUp = () => {
 														if (
 															value &&
 															value.trim()
-																.length >= 2
+																.length == 12
 														) {
 															return Promise.resolve();
 														} else {
@@ -322,6 +332,17 @@ export const SignUp = () => {
 								},
 								({ getFieldValue }) => ({
 									validator(_, value) {
+										if (
+											value.length <= 8 ||
+											getFieldValue('password').length <=
+												8
+										) {
+											return Promise.reject(
+												new Error(
+													'Пароли должны быть больше 8 символов'
+												)
+											);
+										}
 										if (
 											!value ||
 											getFieldValue('password') === value

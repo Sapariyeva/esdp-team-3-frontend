@@ -22,7 +22,7 @@ export interface IUser {
 export interface IUserSignUpRequest {
 	phone: string;
 	displayName: string;
-	birthday: string | null;
+	birthday?: string;
 	password: string;
 	role: ERole;
 	subject: EUserSubject | null;
@@ -54,8 +54,13 @@ export interface IUserSignInRequest {
 
 export interface IUserState {
 	user: IUser | IUser[];
-	multiRoleSuccess: boolean;
 	managers: IUser[];
+	status: IUserStatus;
+}
+
+export interface IUserStatus {
+	success: boolean;
+	message: string;
 }
 
 export interface IUserSignInResponseData {
@@ -73,4 +78,13 @@ export interface IUserSignInResponse {
 }
 export interface IStateUserSubject {
 	subject: EUserSubject | null;
+}
+
+export interface IAxiosErrorPayload {
+	message: string;
+	response?: {
+		data: { success: boolean; message: string };
+		status: number;
+		statusText: string;
+	};
 }
