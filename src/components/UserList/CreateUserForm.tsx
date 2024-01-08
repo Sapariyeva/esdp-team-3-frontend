@@ -5,8 +5,9 @@ import { ERole } from '@/enum/role.enum';
 import { useAppDispatch, useAppSelector } from '@/app/store';
 import { fetchUsers, signUpGhost } from '@/app/userList.slice';
 import './CreateUserForm.scss';
-import { EUserSubject } from '@/enum/user.enum';
-import translateValue, { roleDictionary, subjectDictionary } from '@/helpers/translate.helper';
+import InputMask from 'react-input-mask';
+
+import translateValue, { roleDictionary } from '@/helpers/translate.helper';
 
 const CreateUserForm = () => {
     const navigate = useNavigate();
@@ -14,10 +15,14 @@ const CreateUserForm = () => {
     const [phone, setPhone] = useState('');
     const [firstName, setFirstName] = useState('');
     const [lastName, setLastName] = useState('');
-    const [role, setRole] = useState<ERole>(ERole.customer);
+    const [role, setRole] = useState<ERole | null>(null);
     const [phoneError, setPhoneError] = useState(false);
-    const [subject, setSubject] = useState<EUserSubject | null>(null);
+    const [disabledRoles, setDisabledRoles] = useState<ERole[]>([]);
     const users = useAppSelector((state) => state.users.userList);
+    useEffect(() => {
+        const takenRoles = users.map(user => user.role);
+        setDisabledRoles(takenRoles);
+    }, [users]);
 
     useEffect(() => {
         if (users && users.length > 0) {
@@ -49,14 +54,18 @@ const CreateUserForm = () => {
     }, []);
 
     const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        let numericValue = e.target.value.replace(/\D/g, '');
-        if (numericValue.length > 11) {
-            numericValue = numericValue.slice(0, 11); 
+        const input = e.target.value;
+        const numericValue = input.replace(/\D/g, ''); 
+        
+        const cleanValue = numericValue.startsWith('7') ? numericValue.substring(1) : numericValue;
+
+       
+        if (cleanValue.length > 10) {
             setPhoneError(true); 
         } else {
             setPhoneError(false); 
+            setPhone(cleanValue); 
         }
-        setPhone(numericValue);
     };
 
     const handleRoleChange = (e: RadioChangeEvent) => {
@@ -72,30 +81,21 @@ const CreateUserForm = () => {
     };
 
     const handleSubmit = () => {
-        if (phone && firstName && lastName && subject) {
+        if (phone && firstName && lastName && role !== null) {
             const displayName = `${firstName} ${lastName}`;
             dispatch(signUpGhost({
                 phone,
                 displayName,
-                role: ERole.customer, 
-                subject
+                role 
             }));
         } else {
-            console.error('Не все поля формы заполнены или не выбран subject');
+            console.error('Не все поля формы заполнены ');
         }
     };
     
 
 
 
-    const handleSubjectChange = (e: RadioChangeEvent) => {
-        const subjectValue: string = e.target.value;
-        if (Object.values(EUserSubject).includes(subjectValue as EUserSubject)) {
-            setSubject(subjectValue as EUserSubject);
-        } else {
-            setSubject(null);
-        }
-    };
 
     return (
         <div style={{ padding: '20px' }}>
@@ -103,15 +103,23 @@ const CreateUserForm = () => {
                 ← Назад
             </Button>
             <h1 style={{ marginBottom: '16px' }}>Добавить нового пользователя</h1>
+
             <Form.Item
                 validateStatus={phoneError || (phone.length > 0 && phone.length < 10) ? 'error' : ''}
-                help={phoneError ? 'Номер не должен превышать 11 цифр' : (phone.length > 0 && phone.length < 10 ? 'Номер телефона должен содержать 10 цифр' : '')}
+                help={phoneError || (phone.length > 0 && phone.length < 10) ? 'Введите корректный номер телефона' : ''}
             >
-                <Input
-                    value={phone}
+                
+                <InputMask
+                    mask="+7 (999) 999-99-99"
+                    maskChar={null}
+                    value={'+7' + phone}
                     onChange={handlePhoneChange}
-                    placeholder="Телефон"
-                />
+                    placeholder="+7 (___) ___-__-__"
+                    
+                >
+                    
+                    {(inputProps: any) => <Input {...inputProps} />}
+                </InputMask>
             </Form.Item>
             <Input
                 value={firstName}
@@ -136,29 +144,14 @@ const CreateUserForm = () => {
                             key={roleValue}
                             value={roleValue}
                             className="radio-button-custom"
+                            disabled={disabledRoles.includes(roleValue)} // Делает кнопку недоступной, если роль занята
                         >
                             {translateValue(roleValue, roleDictionary)}
                         </Radio.Button>
                     ))}
                 </Radio.Group>
             </Form.Item>
-            <Form.Item>
-                <Radio.Group
-                    onChange={handleSubjectChange}
-                    className="radio-group-custom separated-radio-button"
-                    value={subject}
-                >
-                    {Object.values(EUserSubject).map((subjectValue) => (
-                        <Radio.Button
-                            key={subjectValue}
-                            value={subjectValue}
-                            className="radio-button-custom"
-                        >
-                            {translateValue(subjectValue, subjectDictionary)}
-                        </Radio.Button>
-                    ))}
-                </Radio.Group>
-            </Form.Item>
+           
             <Button onClick={handleSubmit} type="primary" style={{ marginTop: '16px' }}>
                 ЗАРЕГИСТРИРОВАТЬ
             </Button>

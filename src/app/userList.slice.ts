@@ -56,13 +56,13 @@ const initialState: UserState = {
     },
 };
 export const signUpGhost = createAsyncThunk(
-    'users/signUpGhost',
+    'users/addUser',
     async (user: IUserGhostSignUpRequest, { rejectWithValue }) => {
         const request = Object.fromEntries(
             Object.entries(user).filter(([_, value]) => value !== null)
         );
         try {
-            const { data } = await $api.post('/user/signUp', request);
+            const { data } = await $api.post('/user/addUser', request);
             return data.success;
         } catch (e) {
             return rejectWithValue('HTTP error post request');
