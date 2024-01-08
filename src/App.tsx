@@ -9,8 +9,9 @@ import CreateOrderForm from './containers/OrderCreate/CreateOrderForm';
 import { Orders } from '@/containers/Orders/Orders.tsx';
 import { OrderDetails } from '@/containers/Orders/OrderDetails.tsx';
 import UsersPageContainer from './containers/Users/UsersPage';
-import UserDetail from './components/UserList/UserDetail';
-import CreateUserForm from './components/UserList/CreateUserForm';
+import UserDetail from './containers/Users/UserDetail/UserDetail';
+import CreateUserForm from './containers/Users/CreateUserForm/CreateUserForm';
+
 
 export const App = () => {
 	return (

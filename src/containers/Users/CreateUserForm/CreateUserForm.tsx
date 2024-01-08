@@ -8,6 +8,7 @@ import './CreateUserForm.scss';
 import InputMask from 'react-input-mask';
 
 import translateValue, { roleDictionary } from '@/helpers/translate.helper';
+import { UserListHeader } from '../navigation';
 
 const CreateUserForm = () => {
     const navigate = useNavigate();
@@ -52,7 +53,9 @@ const CreateUserForm = () => {
         setFirstName('');
         setLastName('');
     }, []);
-
+    const goBack = () => {
+        navigate(-1); // Вернуться назад в истории браузера
+    };
     const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const input = e.target.value;
         const numericValue = input.replace(/\D/g, ''); 
@@ -99,11 +102,7 @@ const CreateUserForm = () => {
 
     return (
         <div style={{ padding: '20px' }}>
-            <Button onClick={() => navigate(-1)} style={{ marginBottom: '16px' }}>
-                ← Назад
-            </Button>
-            <h1 style={{ marginBottom: '16px' }}>Добавить нового пользователя</h1>
-
+            <UserListHeader title={'Добавление пользователя'}/>
             <Form.Item
                 validateStatus={phoneError || (phone.length > 0 && phone.length < 10) ? 'error' : ''}
                 help={phoneError || (phone.length > 0 && phone.length < 10) ? 'Введите корректный номер телефона' : ''}

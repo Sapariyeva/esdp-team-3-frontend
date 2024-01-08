@@ -1,10 +1,13 @@
 import { useState, useEffect } from 'react';
 import { fetchUsers, setFilterApplied } from '@/app/userList.slice';
-import SearchBar from '@/components/UserList/SearchBar';
+
 import { useAppDispatch, useAppSelector } from '@/app/store';
-import UserList from '@/components/UserList/UserList';
+
 import { ESearchFields, EUserStatus } from '@/enum/user.enum';
 import { ERole } from '@/enum/role.enum';
+import SearchBar from './SearchBar/SearchBar';
+import UserList from './UserList/UserList';
+
 interface Filters {
     offset: number;
     limit: number;
@@ -66,7 +69,8 @@ const UsersPageContainer = () => {
 
 
     return (
-        <div>
+        
+        <div className="UserList" style={{ padding: '20px 20px' }}>
             <SearchBar onSearch={handleSearch} />
             <UserList
                 users={userList}

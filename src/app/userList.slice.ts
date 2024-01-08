@@ -75,13 +75,24 @@ export const fetchUsers = createAsyncThunk<UsersResponse, FetchUsersParams>(
     async (params, { rejectWithValue }) => {
         try {
             const response = await $api.get('/user', { params });
-            console.log('Response data search:', response.data);
-            return {
-                users: response.data.users,
-                totalItems: response.data.totalItems,
-                totalPages: response.data.totalPages,
-                links: response.data.links,
-            };
+
+            // Проверяем, есть ли в ответе данные о пользователях
+            if (response.data.users && response.data.totalItems !== undefined) {
+                console.log('Response data search:', response.data);
+                return {
+                    users: response.data.users,
+                    totalItems: response.data.totalItems,
+                    totalPages: response.data.totalPages,
+                    links: response.data.links,
+                };
+            } else if (response.data.success === false) {
+                // Если в ответе есть сообщение об ошибке, обрабатываем его
+                console.error('Error in response:', response.data.message);
+                return rejectWithValue(response.data.message);
+            } else {
+                // Если ответ не соответствует ожидаемой структуре
+                return rejectWithValue('Invalid response structure');
+            }
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 return rejectWithValue(error.response?.data || error.message);
@@ -108,27 +119,7 @@ export const fetchUserById = createAsyncThunk(
 );
 
 
-export const fetchUsersWithPaginationLink = createAsyncThunk(
-    'users/fetchUsersWithPaginationLink',
-    async (paginationUrl: string, { rejectWithValue }) => {
-        try {
-            const response = await $api.get(paginationUrl);
-            console.log('Response data url:', response.data);
-            return {
-                users: response.data.users,
-                totalItems: response.data.totalItems,
-                totalPages: response.data.totalPages,
-                links: response.data.links,
-            };
-        } catch (error) {
-            if (axios.isAxiosError(error)) {
-                return rejectWithValue(error.response?.data || error.message);
-            } else {
-                return rejectWithValue('An unexpected error occurred');
-            }
-        }
-    }
-);
+
 
 
 
@@ -204,23 +195,7 @@ export const userListSlice = createSlice({
                 state.currentUser = null;
                 state.error = action.payload as string || 'Unknown error occurred';
             })
-            // обработчики для fetchUsersWithPaginationLink
-            .addCase(fetchUsersWithPaginationLink.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(fetchUsersWithPaginationLink.fulfilled, (state, action: PayloadAction<UsersResponse>) => {
-                const { users, totalItems, totalPages, links } = action.payload;
-                state.userList = [...state.userList, ...users];
-                state.totalItems = totalItems;
-                state.totalPages = totalPages;
-                state.paginationLinks = links;
-                state.loading = false;
-            })
-            .addCase(fetchUsersWithPaginationLink.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload as string || 'Unknown error occurred';
-            })
+            
             .addCase(signUpGhost.pending, (state) => {
                 state.loading = true;
                 state.error = null;
