@@ -86,27 +86,15 @@ export const SignUp = () => {
 			...values,
 			phone: values.phone.replace(/[\s()+_-]/g, '').substring(1),
 		});
-		let user: IUserSignUpRequest;
-		if (values.birthday) {
-			user = {
-				phone: values.phone.replace(/[\s()+_-]/g, '').substring(1),
-				displayName: `${values.firstName} ${values.lastName}`,
-				password: values.password,
-				birthday: `${values.birthday}`,
-				role: values.role,
-				subject: null,
-				identifyingNumber: null,
-			};
-		} else {
-			user = {
-				phone: values.phone.replace(/[\s()+_-]/g, '').substring(1),
-				displayName: `${values.firstName} ${values.lastName}`,
-				password: values.password,
-				role: values.role,
-				subject: null,
-				identifyingNumber: null,
-			};
-		}
+		const user: IUserSignUpRequest = {
+			phone: values.phone.replace(/[\s()+_-]/g, '').substring(1),
+			displayName: `${values.firstName} ${values.lastName}`,
+			password: values.password,
+			role: values.role,
+			subject: null,
+			identifyingNumber: null,
+			...(values.birthday && { birthday: `${values.birthday}` }),
+		};
 		const data = await dispatch(signUp(user));
 		const response = data.payload as IAxiosErrorPayload;
 		if (!response || typeof response !== 'object') {
