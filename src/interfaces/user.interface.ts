@@ -32,7 +32,6 @@ export interface IUserGhostSignUpRequest {
     phone: string;
     displayName: string;
     role: ERole;
-    subject: EUserSubject | null;
 }
 
 export interface IUserStateForm {

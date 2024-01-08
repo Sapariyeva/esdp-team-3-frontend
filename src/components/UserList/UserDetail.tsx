@@ -5,6 +5,7 @@ import { fetchUserById } from '@/app/userList.slice';
 import { Avatar, Button, Card, Tag } from 'antd';
 
 import { CloseOutlined, UserOutlined } from '@ant-design/icons';
+import { displayFormatPhone } from '@/helpers/displayFormatPhone.helper';
 
 
 const UserDetail: React.FC = () => {
@@ -72,14 +73,14 @@ const UserDetail: React.FC = () => {
                     title={user.displayName}
                     description={(
                         <>
-                            <p><strong>Телефон:</strong> {user.phone ? displayFormatPhone(user.phone) : 'Не указан'}</p>
-                            <p><strong>Email:</strong> {user.email || 'Не указан'}</p>
-                            <p><strong>Дата рождения:</strong> {user.birthday ? formattedBirthday : 'Не указана'}</p>
-                            <p><strong>Роль:</strong> {user.role}</p>
-                            <p><strong>Средний рейтинг:</strong> {user.avgRating || 'Не указан'}</p>
-                            <p><strong>Количество оценок:</strong> {user.ratingCount || 'Не указано'}</p>
-                            <p><strong>Последнее местоположение:</strong> {user.lastPosition || 'Не указано'}</p>
-                            <p><strong>Идентификационный номер:</strong> {user.identifyingNumber || 'Не указан'}</p>
+                            <p>Телефон:{user.phone ? displayFormatPhone(user.phone) : 'Не указан'}</p>
+                            <p>Email: {user.email || 'Не указан'}</p>
+                            <p>Дата рождения: {user.birthday ? formattedBirthday : 'Не указана'}</p>
+                            <p>Роль: {user.role}</p>
+                            <p>Средний рейтинг: {user.avgRating || 'Не указан'}</p>
+                            <p>Количество оценок: {user.ratingCount || 'Не указано'}</p>
+                            <p>Последнее местоположение: {user.lastPosition || 'Не указано'}</p>
+                            <p>Идентификационный номер: {user.identifyingNumber || 'Не указан'}</p>
                             <Tag color={user.status === 'ACTIVE' ? 'green' : 'volcano'}>{user.status}</Tag>
                         </>
                     )}

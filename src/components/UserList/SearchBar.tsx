@@ -196,6 +196,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
             >
                 <Space direction="vertical">
                     <p>Пожалуйста, выберите поле, по которому хотите выполнить поиск.</p>
+                    <Flex style={{ width: '100%', flexWrap: 'wrap', gap: '13px' }}>
                     {Object.values(ESearchFields).map((field) => (
                         <Button
                             key={field}
@@ -204,11 +205,26 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                                 toggleSearchField(field);
                                 setIsSelectFieldModalVisible(false);
                             }}
+                            size="small"
+                            style={{
+
+                                width: '45%',
+                                height: '29px',
+                                borderColor: '#006698',
+                                fontSize: '14px',
+                                display: 'flex',
+                                alignItems: 'center',
+                                justifyContent: 'center',
+                                padding: 0,
+                                maxWidth: '152px'
+
+                            }}
                             className={selectedSearchField === field ? 'selectedFieldButton' : ''}
                         >
-                            {field}
+                            {translateValue(field, searchFieldsDictionary)}
                         </Button>
                     ))}
+                    </Flex>
                 </Space>
             </Modal>
         </>
