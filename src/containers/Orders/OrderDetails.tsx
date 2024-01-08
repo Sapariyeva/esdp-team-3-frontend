@@ -6,6 +6,7 @@ import { Button, Col, Flex, Row, Typography } from 'antd';
 import { ModalOrderDetails } from '@/components/UI/Modal/ModalOrderDetails.tsx';
 import { orderDetailsButton, ordersContainerFlexWrapStyle } from './OrderDetailsStyle.config';
 import { ModalOrderPerformers } from '@/components/UI/Modal/ModalOrderPerformers';
+import { UserListHeader } from '../Users/navigation';
 
 export const OrderDetails = () => {
 	const { orderDetails } = useAppSelector(state => state.order);
@@ -15,9 +16,9 @@ export const OrderDetails = () => {
 	useEffect(() => {
 		if (idParams) dispatch(getOrder(idParams));
 	}, [params]);
-	return (
+    return (<><UserListHeader title='Информация о заказе' />
 		<div style={{ height: '100vh', display: 'flex', alignItems: 'center' }}>
-
+            
 			<Flex gap='middle' vertical style={ordersContainerFlexWrapStyle}>
 				<Typography.Title level={4}>Информация о заказе</Typography.Title>
 				{orderDetails.details && orderDetails.details.address ?
@@ -53,5 +54,6 @@ export const OrderDetails = () => {
 				<ModalOrderDetails />
 			</Flex>
 		</div>
+    </>
 	);
 };

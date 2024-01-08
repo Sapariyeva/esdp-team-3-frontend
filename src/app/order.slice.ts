@@ -30,6 +30,7 @@ const initialState: IOrderState = {
 	orderDetails: {
 		details: null,
 	},
+    loading: false,
 };
 
 export const getOrders = createAsyncThunk('getOrders', async (_, { rejectWithValue }) => {
@@ -174,15 +175,21 @@ export const orderSlice = createSlice({
 				};
 			})
 
-			.addCase(getPageData.pending, () => { })
-
-			.addCase(
-				getPageData.fulfilled,
-				(state, action: PayloadAction<IOrderList>) => {
-					state.orderData = action.payload;
-				}
-			)
-			.addCase(getPageData.rejected, () => { })
+        .addCase(getPageData.pending, (state) => {
+            state.loading = true;
+        })
+            .addCase(getPageData.fulfilled, (state, action: PayloadAction<IOrderList>) => {
+               
+                state.orderData.orders = [
+                    ...state.orderData.orders,
+                    ...action.payload.orders,
+                ];
+                state.orderData.links = action.payload.links;     
+                state.loading = false;
+            })
+            .addCase(getPageData.rejected, (state) => {
+                state.loading = false;
+            })
 
 			.addCase(getUserList.pending, () => { })
 			.addCase(

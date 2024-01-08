@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@/app/store.ts';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import {
 	getFilterOrders,
 	getOrders,
@@ -12,8 +12,6 @@ import {
 	Button,
 	Col,
 	Flex,
-	Pagination,
-	PaginationProps,
 	Row,
 	Space,
 	Typography,
@@ -28,6 +26,8 @@ import {
 	ordersModalFilterButtonStyle,
 	ordersRowStyle,
 } from '@/containers/Orders/OrderDetailsStyle.config.ts';
+import useInfiniteScroll from '@/components/UI/scrolling/useInfiniteScroll';
+import { UserListHeader } from '../Users/navigation';
 
 export const Orders = () => {
 	const dispatch = useAppDispatch();
@@ -35,7 +35,7 @@ export const Orders = () => {
 	const params = useParams();
 	const idParams: string | undefined = params.filter;
 	const { orderData } = useAppSelector((store) => store.order);
-
+    const isLoading = useAppSelector((state) => state.order.loading);
 	useEffect(() => {
 		if (!idParams) dispatch(getOrders());
 	}, [params]);
@@ -44,22 +44,36 @@ export const Orders = () => {
 			dispatch(getFilterOrders(`status=${idParams.toUpperCase()}`));
 		}
 	}, [params]);
-	const [current, setCurrent] = useState(1);
 
-	const onChange: PaginationProps['onChange'] = async (page) => {
-		await dispatch(getPageData(`${orderData.links[`page${page}`]!}&`));
-		setCurrent(page);
-	};
 
-	const showModal = async () => {
-		await dispatch(getUserList('manager'));
-		await dispatch(getUserList('customer'));
-		dispatch(setIsModalFilterOpen());
-	};
+    const loadMoreOrders = () => {
+        if (orderData.links.next && !isLoading) {
+            dispatch(getPageData(orderData.links.next));
+        }
+    };
+
+    useInfiniteScroll(loadMoreOrders, isLoading);
+
+    useEffect(() => {
+        if (!idParams) dispatch(getOrders());
+    }, [params]);
+
+    useEffect(() => {
+        if (idParams && (idParams === 'in_progress' || idParams === 'done')) {
+            dispatch(getFilterOrders(`status=${idParams.toUpperCase()}`));
+        }
+    }, [params]);
+
+    const showModal = async () => {
+        await dispatch(getUserList('manager'));
+        await dispatch(getUserList('customer'));
+        dispatch(setIsModalFilterOpen());
+    };
 
 	return (
 		<>
 			{!idParams && <ModalOrderFilter />}
+            <UserListHeader title='Список заказов'/>
 			<Space direction="vertical" size="middle">
 				<Flex style={ordersContainerFlexStyle}>
 					<Flex
@@ -119,16 +133,11 @@ export const Orders = () => {
 					{orderData.orders.length !== 0 &&
 						orderData.totalItems > 20 && (
 							<Flex style={ordersContainerFlexStyle}>
-								<Pagination
-									current={current}
-									onChange={onChange}
-									total={orderData.totalItems}
-									pageSize={20}
-									showSizeChanger={false}
-								/>
+								
 							</Flex>
 						)}
 				</Flex>
+                <div id="infinite-scroll-sentinel" />
 			</Space>
 		</>
 	);
