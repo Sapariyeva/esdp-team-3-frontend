@@ -176,22 +176,18 @@ export const orderSlice = createSlice({
 			})
 
         .addCase(getPageData.pending, (state) => {
-            // Устанавливаем состояние загрузки в true
             state.loading = true;
         })
             .addCase(getPageData.fulfilled, (state, action: PayloadAction<IOrderList>) => {
-                // Объединяем существующие заказы с новыми
+               
                 state.orderData.orders = [
                     ...state.orderData.orders,
                     ...action.payload.orders,
                 ];
-                // Обновляем ссылки, включая ссылку на следующую страницу
-                state.orderData.links = action.payload.links;
-                // Сбрасываем состояние загрузки в false
+                state.orderData.links = action.payload.links;     
                 state.loading = false;
             })
             .addCase(getPageData.rejected, (state) => {
-                // Сбрасываем состояние загрузки в false
                 state.loading = false;
             })
 

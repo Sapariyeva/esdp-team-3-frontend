@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from '@/app/store.ts';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import {
 	getFilterOrders,
 	getOrders,
@@ -12,8 +12,6 @@ import {
 	Button,
 	Col,
 	Flex,
-	Pagination,
-	PaginationProps,
 	Row,
 	Space,
 	Typography,
@@ -54,7 +52,6 @@ export const Orders = () => {
         }
     };
 
-    // Используйте хук useInfiniteScroll здесь
     useInfiniteScroll(loadMoreOrders, isLoading);
 
     useEffect(() => {
