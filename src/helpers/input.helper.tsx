@@ -1,29 +1,15 @@
 export const formatPhoneNumber = (valueInput: string) => {
-	const prefixNumber = (prefix: string) => {
-		if (prefix === '7') {
-			return '7 (';
-		}
-		if (prefix === '8') {
-			return '8 (';
-		}
-		if (prefix === '9') {
-			return '7 (9';
-		}
-		return `7 (${prefix}`;
-	};
+	const prefixNumber = '7 (';
+
 	const value = valueInput.replace(/\D+/g, '');
 	const numberLength = 11;
 
-	let result;
-	if (valueInput.includes('+8') || valueInput[0] === '8') {
-		result = '';
-	} else {
-		result = '+';
-	}
+	let result = '+';
+
 	for (let i = 0; i < value.length && i < numberLength; i++) {
 		switch (i) {
 			case 0:
-				result += prefixNumber(value[i]);
+				result += prefixNumber;
 				continue;
 			case 4:
 				result += ') ';
@@ -39,5 +25,6 @@ export const formatPhoneNumber = (valueInput: string) => {
 		}
 		result += value[i];
 	}
+
 	return result;
 };
