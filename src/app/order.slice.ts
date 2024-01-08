@@ -30,6 +30,7 @@ const initialState: IOrderState = {
 	orderDetails: {
 		details: null,
 	},
+    loading: false,
 };
 
 export const getOrders = createAsyncThunk('getOrders', async (_, { rejectWithValue }) => {
@@ -174,15 +175,25 @@ export const orderSlice = createSlice({
 				};
 			})
 
-			.addCase(getPageData.pending, () => { })
-
-			.addCase(
-				getPageData.fulfilled,
-				(state, action: PayloadAction<IOrderList>) => {
-					state.orderData = action.payload;
-				}
-			)
-			.addCase(getPageData.rejected, () => { })
+        .addCase(getPageData.pending, (state) => {
+            // Устанавливаем состояние загрузки в true
+            state.loading = true;
+        })
+            .addCase(getPageData.fulfilled, (state, action: PayloadAction<IOrderList>) => {
+                // Объединяем существующие заказы с новыми
+                state.orderData.orders = [
+                    ...state.orderData.orders,
+                    ...action.payload.orders,
+                ];
+                // Обновляем ссылки, включая ссылку на следующую страницу
+                state.orderData.links = action.payload.links;
+                // Сбрасываем состояние загрузки в false
+                state.loading = false;
+            })
+            .addCase(getPageData.rejected, (state) => {
+                // Сбрасываем состояние загрузки в false
+                state.loading = false;
+            })
 
 			.addCase(getUserList.pending, () => { })
 			.addCase(

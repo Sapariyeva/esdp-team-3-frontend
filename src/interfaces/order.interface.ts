@@ -11,6 +11,7 @@ export interface IOrderState {
 		details: IOrder | null;
 	};
 	modalOrderPerformers: boolean;
+    loading: boolean,
 }
 export interface IOrderList {
 	orders: IOrder[];
