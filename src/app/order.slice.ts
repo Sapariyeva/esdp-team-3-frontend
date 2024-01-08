@@ -10,6 +10,8 @@ import {
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { $api } from '@/api/api.ts';
 import { IOrderRequest } from '@/interfaces/IOrderRequest.interface';
+import { getCurrentDate } from '@/helpers/getCurrentDate.helper';
+import { downloadFile } from '@/helpers/downloadFile.helpers';
 
 const initialState: IOrderState = {
 	orderData: {
@@ -24,6 +26,7 @@ const initialState: IOrderState = {
 	},
 	modalFilterOrder: false,
 	modalOrderDetails: false,
+	modalOrderPerformers: false,
 	orderDetails: {
 		details: null,
 	},
@@ -107,6 +110,25 @@ export const createOrder = createAsyncThunk(
 	}
 );
 
+export const exportOrderListToCSV = createAsyncThunk(
+	'exportOrderListToCSV',
+	async (_, { rejectWithValue }) => {
+		try {
+			const response = await $api.get(`/order/export-csv`,
+				{ responseType: 'blob' }
+			);
+
+			const blobURL = URL.createObjectURL(response.data);
+			const formattedDateTime = getCurrentDate();
+
+			await downloadFile(blobURL, `orders_${formattedDateTime}.csv`);
+			URL.revokeObjectURL(blobURL);
+		} catch (e) {
+			return rejectWithValue('');
+		}
+	}
+);
+
 export const orderSlice = createSlice({
 	name: 'orderSlice',
 	initialState,
@@ -122,6 +144,10 @@ export const orderSlice = createSlice({
 		},
 		setIsModalDetailsClose(state) {
 			state.modalOrderDetails = false;
+			state.modalOrderPerformers = false;
+		},
+		setIsModalOrderPerformers(state) {
+			state.modalOrderPerformers = !state.modalOrderPerformers;
 		},
 	},
 	extraReducers: (builder) => {
@@ -201,4 +227,5 @@ export const {
 	setIsModalFilterClose,
 	setIsModalDetailsOpen,
 	setIsModalDetailsClose,
+	setIsModalOrderPerformers
 } = orderSlice.actions;

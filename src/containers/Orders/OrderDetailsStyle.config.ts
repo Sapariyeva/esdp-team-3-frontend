@@ -1,6 +1,11 @@
 import { ConfigProviderProps } from 'antd/es/config-provider';
 import { CSSProperties } from 'react';
 
+export const orderDetailsButton: CSSProperties = {
+	minWidth: '300px',
+	height: '54px'
+};
+
 export const orderDetailsModalStyle: ConfigProviderProps = {
 	flex: {
 		style: {

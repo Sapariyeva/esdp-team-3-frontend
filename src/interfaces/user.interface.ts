@@ -3,7 +3,7 @@ import { EUserStatus, EUserSubject } from '@/enum/user.enum.ts';
 
 export interface IUser {
 	id: number;
-	phone: string | null;
+	phone: string ;
 	displayName: string;
 	email: string | null;
 	password: string | null;
@@ -27,6 +27,11 @@ export interface IUserSignUpRequest {
 	role: ERole;
 	subject: EUserSubject | null;
 	identifyingNumber: number | null;
+}
+export interface IUserGhostSignUpRequest {
+    phone: string;
+    displayName: string;
+    role: ERole;
 }
 
 export interface IUserStateForm {
