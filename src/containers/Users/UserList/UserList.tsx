@@ -67,7 +67,7 @@ const UserList: React.FC<UserListProps> = ({
     };
     return (
 
-        <div className="UserList" style={{ padding: '0 20px' }}>
+        <div >
             <List
                 itemLayout="horizontal"
                 dataSource={users}
@@ -151,11 +151,6 @@ const UserList: React.FC<UserListProps> = ({
 
                 }}
             />
-            <div style={{ padding: '0 20px' }}>
-                <Button type="primary" onClick={goToCreateUser} style={{ marginBottom: '16px' }}>
-                    Добавить пользователя
-                </Button>
-            </div>
         </div>
     );;
 };

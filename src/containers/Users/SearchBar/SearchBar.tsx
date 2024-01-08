@@ -1,12 +1,16 @@
 import React, { useState } from 'react';
-import { Button, Flex, Input, Modal, Space, Typography } from 'antd';
+import { Button, Flex, Input, Modal, Select, Space, Typography } from 'antd';
 import { ERole } from '@/enum/role.enum';
 import { ESearchFields, EUserStatus } from '@/enum/user.enum';
 
-import { FilterTwoTone} from '@ant-design/icons';
+import { FilterTwoTone, LeftOutlined, PlusCircleOutlined} from '@ant-design/icons';
 
 import './SearchBar.scss';
 import translateValue, { roleDictionary, searchFieldsDictionary, statusDictionary } from '@/helpers/translate.helper';
+import { useNavigate } from 'react-router-dom';
+import { UserListHeader } from '../navigation';
+
+const { Option } = Select;
 interface SearchBarProps {
     onSearch: (
         searchTerm: string,
@@ -20,9 +24,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedStatus, setSelectedStatus] = useState<EUserStatus | null>(null);
     const [selectedRole, setSelectedRole] = useState<ERole | null>(null);
-    const [selectedSearchField, setSelectedSearchField] = useState<ESearchFields | null>(null);
+    const [selectedSearchField, setSelectedSearchField] = useState<ESearchFields | null>(ESearchFields.DisplayName);
     const [isSelectFieldModalVisible, setIsSelectFieldModalVisible] = useState(false);
     const [debounceTimer, setDebounceTimer] = useState<NodeJS.Timeout | null>(null);
+   
     const toggleStatus = (status: EUserStatus) => {
         const newStatus = selectedStatus === status ? null : status;
         setSelectedStatus(newStatus);
@@ -66,20 +71,37 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
 
 
     return (
-        <>
-            <div className="searchBarContainer">
-                <Input
-                    placeholder="Введите текст для поиска..."
-                    onChange={(e) => handleSearch(e.target.value)}
-                    className="searchInput"
-                />
-                <Button
-                    icon={<FilterTwoTone />} 
-                    onClick={() => setIsFilterModalVisible(true)}
-                    className="filterButton"
-
-                />
-            </div>
+        <div className="searchContainer">
+            <UserListHeader title={'Список пользователей'} link={'/createUserForm'}/>
+           
+            <Input
+                addonBefore={
+                    <Select
+                        defaultValue={ESearchFields.DisplayName}
+                        className="searchSelect"
+                        onChange={toggleSearchField}
+                        value={selectedSearchField || undefined}
+                        dropdownMatchSelectWidth={false}
+                        style={{ width: 130 }} // Вы можете настроить ширину Select
+                    >
+                        {Object.values(ESearchFields).map((field) => (
+                            <Option key={field} value={field}>
+                                {translateValue(field, searchFieldsDictionary)}
+                            </Option>
+                        ))}
+                    </Select>
+                }
+                placeholder="Введите текст для поиска..."
+                onChange={(e) => handleSearch(e.target.value)}
+                className="searchInput"
+                suffix={
+                    <Button
+                        icon={<FilterTwoTone />}
+                        onClick={() => setIsFilterModalVisible(true)}
+                        className="filterButton"
+                    />
+                }
+            />
 
             <Modal
                 title="Настройки фильтра"
@@ -157,77 +179,12 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
                         </Flex>
 
                         {/* Фильтр по полю поиска */}
-                        <Typography.Title level={5} style={{ marginBottom: '10px' }}>Поиск по</Typography.Title>
-                        <Flex style={{ width: '100%', flexWrap: 'wrap', gap: '13px' }}>
-                            {Object.values(ESearchFields).map((field) => (
-                                <Button
-                                    key={field}
-                                    type={selectedSearchField === field ? 'primary' : 'default'}
-                                    onClick={() => toggleSearchField(field)}
-                                    size="small"
-                                    style={{
-
-                                        width: '45%',
-                                        height: '29px',
-                                        borderColor: '#006698',
-                                        fontSize: '14px',
-                                        display: 'flex',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                        padding: 0,
-                                        maxWidth: '152px'
-
-                                    }}
-                                >
-                                    
-                                    {translateValue(field, searchFieldsDictionary)}
-                                </Button>
-                            ))}
-                        </Flex>
+                        
                     </Flex>
                 </Space>
             </Modal>
-            <Modal
-                title="Выбор поля для поиска"
-                visible={isSelectFieldModalVisible}
-                onCancel={() => setIsSelectFieldModalVisible(false)}
-                footer={null} 
-                className="selectFieldModalStyle" 
-            >
-                <Space direction="vertical">
-                    <p>Пожалуйста, выберите поле, по которому хотите выполнить поиск.</p>
-                    <Flex style={{ width: '100%', flexWrap: 'wrap', gap: '13px' }}>
-                    {Object.values(ESearchFields).map((field) => (
-                        <Button
-                            key={field}
-                            type={selectedSearchField === field ? 'primary' : 'default'}
-                            onClick={() => {
-                                toggleSearchField(field);
-                                setIsSelectFieldModalVisible(false);
-                            }}
-                            size="small"
-                            style={{
-
-                                width: '45%',
-                                height: '29px',
-                                borderColor: '#006698',
-                                fontSize: '14px',
-                                display: 'flex',
-                                alignItems: 'center',
-                                justifyContent: 'center',
-                                padding: 0,
-                                maxWidth: '152px'
-
-                            }}
-                            className={selectedSearchField === field ? 'selectedFieldButton' : ''}
-                        >
-                            {translateValue(field, searchFieldsDictionary)}
-                        </Button>
-                    ))}
-                    </Flex>
-                </Space>
-            </Modal>
-        </>
+           
+        </div>
     );
 };
 
