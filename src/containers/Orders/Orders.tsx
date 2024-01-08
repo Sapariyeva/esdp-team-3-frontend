@@ -52,8 +52,8 @@ export const Orders = () => {
 	};
 
 	const showModal = async () => {
-		await dispatch(getUserList('manager'));
-		await dispatch(getUserList('customer'));
+		await dispatch(getUserList({ role: 'manager' }));
+		await dispatch(getUserList({ role: 'customer' }));
 		dispatch(setIsModalFilterOpen());
 	};
 

@@ -32,14 +32,17 @@ const initialState: IOrderState = {
 	},
 };
 
-export const getOrders = createAsyncThunk('getOrders', async (_, { rejectWithValue }) => {
-	try {
-		const { data }: IResponseOrders = await $api.get(`/order`);
-		return data;
-	} catch (e) {
-		return rejectWithValue('HTTP error post request');
+export const getOrders = createAsyncThunk(
+	'getOrders',
+	async (_, { rejectWithValue }) => {
+		try {
+			const { data }: IResponseOrders = await $api.get(`/order`);
+			return data;
+		} catch (e) {
+			return rejectWithValue('HTTP error post request');
+		}
 	}
-});
+);
 
 export const getOrder = createAsyncThunk(
 	'getOrder',
@@ -66,15 +69,25 @@ export const getPageData = createAsyncThunk(
 );
 export const getUserList = createAsyncThunk(
 	'getUserList',
-	async (role: string, { rejectWithValue }) => {
+	async (
+		userInfo: { role: string; displayName?: string },
+		{ rejectWithValue }
+	) => {
 		try {
-			const { data }: IResponseManagerList = await $api.get(`/user?role=${role}`);
-			const userList = data.users.map(({ id, displayName }) => ({
+			let response: IResponseManagerList;
+			if (userInfo.displayName) {
+				response = await $api.get(
+					`/user?role=${userInfo.role}&displayName=${userInfo.displayName}`
+				);
+			} else {
+				response = await $api.get(`/user?role=${userInfo.role}`);
+			}
+			const userList = response.data.users.map(({ id, displayName }) => ({
 				id,
 				displayName,
 			}));
 			return {
-				role,
+				role: userInfo.role,
 				userList,
 			};
 		} catch (e) {
@@ -114,9 +127,9 @@ export const exportOrderListToCSV = createAsyncThunk(
 	'exportOrderListToCSV',
 	async (_, { rejectWithValue }) => {
 		try {
-			const response = await $api.get(`/order/export-csv`,
-				{ responseType: 'blob' }
-			);
+			const response = await $api.get(`/order/export-csv`, {
+				responseType: 'blob',
+			});
 
 			const blobURL = URL.createObjectURL(response.data);
 			const formattedDateTime = getCurrentDate();
@@ -152,16 +165,16 @@ export const orderSlice = createSlice({
 	},
 	extraReducers: (builder) => {
 		builder
-			.addCase(getOrders.pending, () => { })
+			.addCase(getOrders.pending, () => {})
 			.addCase(
 				getOrders.fulfilled,
 				(state, action: PayloadAction<IOrderList>) => {
 					state.orderData = action.payload;
 				}
 			)
-			.addCase(getOrders.rejected, () => { })
+			.addCase(getOrders.rejected, () => {})
 
-			.addCase(getOrder.pending, () => { })
+			.addCase(getOrder.pending, () => {})
 			.addCase(
 				getOrder.fulfilled,
 				(state, action: PayloadAction<IOrder>) => {
@@ -174,7 +187,7 @@ export const orderSlice = createSlice({
 				};
 			})
 
-			.addCase(getPageData.pending, () => { })
+			.addCase(getPageData.pending, () => {})
 
 			.addCase(
 				getPageData.fulfilled,
@@ -182,9 +195,9 @@ export const orderSlice = createSlice({
 					state.orderData = action.payload;
 				}
 			)
-			.addCase(getPageData.rejected, () => { })
+			.addCase(getPageData.rejected, () => {})
 
-			.addCase(getUserList.pending, () => { })
+			.addCase(getUserList.pending, () => {})
 			.addCase(
 				getUserList.fulfilled,
 				(
@@ -202,9 +215,9 @@ export const orderSlice = createSlice({
 					}
 				}
 			)
-			.addCase(getUserList.rejected, () => { })
+			.addCase(getUserList.rejected, () => {})
 
-			.addCase(getFilterOrders.pending, () => { })
+			.addCase(getFilterOrders.pending, () => {})
 			.addCase(
 				getFilterOrders.fulfilled,
 				(state, action: PayloadAction<IOrderList>) => {
@@ -227,5 +240,5 @@ export const {
 	setIsModalFilterClose,
 	setIsModalDetailsOpen,
 	setIsModalDetailsClose,
-	setIsModalOrderPerformers
+	setIsModalOrderPerformers,
 } = orderSlice.actions;

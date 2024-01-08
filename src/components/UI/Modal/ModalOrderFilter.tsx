@@ -2,6 +2,7 @@ import { Button, Flex, Form, Modal, Radio, Select, Typography } from 'antd';
 import {
 	getFilterOrders,
 	getOrders,
+	getUserList,
 	setIsModalFilterClose,
 } from '@/app/order.slice.ts';
 import { useAppDispatch, useAppSelector } from '@/app/store.ts';
@@ -15,13 +16,24 @@ import {
 	modalOrderFilterContainer,
 	modalOrderFilterFormContainer,
 } from '@/containers/Orders/OrderDetailsStyle.config.ts';
+import { useEffect, useState } from 'react';
+
 export const ModalOrderFilter = () => {
 	const dispatch = useAppDispatch();
 	const { filterOrder, modalFilterOrder } = useAppSelector(
 		(store) => store.order
 	);
+	const [valueForm, setValueForm] = useState<{ displayName: string }>({
+		displayName: '',
+	});
 	const onFinish = async (values: IStateFilter) => {
 		let queryParameters: string = '';
+		if (values.customer) {
+			const idCustomer = filterOrder.listCustomer.filter(
+				(item) => item.displayName === values.customer
+			);
+			values.customer = `${idCustomer[0].id}`;
+		}
 		const valuesWithoutNulls: Record<string, string> = Object.entries(
 			values
 		)
@@ -51,6 +63,16 @@ export const ModalOrderFilter = () => {
 		{ label: 'Сначала старые', value: 'DESC&sortBy=createdAt' },
 		{ label: 'По дате исполнения', value: 'ASC&sortBy=orderData' },
 	];
+	useEffect(() => {
+		(async () => {
+			await dispatch(
+				getUserList({
+					role: 'customer',
+					displayName: valueForm.displayName,
+				})
+			);
+		})();
+	}, [valueForm]);
 	return (
 		<>
 			<Modal
@@ -181,24 +203,19 @@ export const ModalOrderFilter = () => {
 								Заказчик
 							</Typography.Title>
 							<Form.Item name="customer">
-								<Select placeholder="Выберите заказчика">
-									{filterOrder.listCustomer.length !== 0 ? (
-										<>
-											{filterOrder.listCustomer.map(
-												(item, index) => (
-													<Select.Option
-														value={item.id}
-														key={index}
-													>
-														{item.displayName}
-													</Select.Option>
-												)
-											)}
-										</>
-									) : (
-										<></>
+								<Select
+									placeholder="Выберите заказчика"
+									showSearch
+									options={filterOrder.listCustomer.map(
+										(item) => ({
+											value: item.displayName,
+											label: item.displayName,
+										})
 									)}
-								</Select>
+									onChange={(e) => {
+										setValueForm(e);
+									}}
+								/>
 							</Form.Item>
 						</Flex>
 
